@@ -1,0 +1,40 @@
+---
+- name: Find latest version of kubectl
+  uri:
+    url: https://storage.googleapis.com/kubernetes-release/release/stable.txt
+    return_content: yes
+  register: webpage
+
+- name: Download kubectl
+  become: yes
+  get_url:
+    url: "https://storage.googleapis.com/kubernetes-release/release/{{ webpage.content | trim }}/bin/linux/amd64/kubectl"
+    dest: /usr/local/bin/kubectl
+    force: yes
+
+- name: Make kubectl executable
+  become: yes
+  file:
+    path: /usr/local/bin/kubectl
+    mode: "u=xrw,g=xr,o=x"
+
+- name: Make sure .kube folder exists
+  file:
+    path: /home/{{ ansible_user_id }}/.kube
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+
+- name: Store bash completion for kubectl
+  shell: kubectl completion bash > ~/.kube/completion.bash.inc
+
+- name: Add to bash_profile
+  blockinfile:
+    content: |
+      # Kubectl shell completion
+      # See https://kubernetes.io/docs/reference/kubectl/cheatsheet/#bash
+      source $HOME/.kube/completion.bash.inc
+      alias k=kubectl
+      complete -F __start_kubectl k
+    path: /home/{{ ansible_user_id }}/.bashrc
+    marker: "# {mark} ANSIBLE MANAGED BLOCK KUBECTL"

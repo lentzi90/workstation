@@ -1,0 +1,31 @@
+- name: Install base packages
+  become: yes
+  dnf:
+    name:
+      - python3-libselinux
+      - git
+      - htop
+      - screenfetch
+      - unzip
+      - vim-enhanced
+      - hunspell-sv
+      - langpacks-sv
+      - langpacks-en
+      - logrotate
+      - nfs-utils
+      - wget
+      - tar
+      - byobu
+
+
+- name: Add starship config
+  copy:
+    src: PGP-public-key.txt
+    dest: /home/{{ ansible_user_id }}/PGP-public-key.txt
+
+- name: Import PGP public key
+  command: gpg --import /home/{{ ansible_user_id }}/PGP-public-key.txt
+
+# TODO:
+# - Restart pcscd?
+# - Configure scdaemon.conf "reader-port Yubico Yubi"?

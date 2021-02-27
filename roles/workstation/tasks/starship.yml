@@ -1,0 +1,26 @@
+---
+- name: Find latest version of starship
+  uri:
+    url: https://api.github.com/repos/starship/starship/releases/latest
+    return_content: yes
+  register: latest_release
+
+- name: Download, extract and install starship
+  become: yes
+  unarchive:
+    src: "https://github.com/starship/starship/releases/download/{{ (latest_release.content | from_json).tag_name }}/starship-x86_64-unknown-linux-gnu.tar.gz"
+    dest: /usr/local/bin/
+    remote_src: yes
+
+- name: Add starship to bash_profile
+  blockinfile:
+    content: |
+      # Starship
+      eval "$(starship init bash)"
+    path: /home/{{ ansible_user_id }}/.bashrc
+    marker: "# {mark} ANSIBLE MANAGED BLOCK STARSHIP"
+
+- name: Add starship config
+  copy:
+    src: starship.toml
+    dest: /home/{{ ansible_user_id }}/.config/starship.toml

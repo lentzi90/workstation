@@ -1,0 +1,4 @@
+[kubernetes]
+disabled = false
+[directory]
+truncate_to_repo = false

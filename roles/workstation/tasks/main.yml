@@ -1,0 +1,49 @@
+- name: Install the rpmfusion repo packages
+  become: yes
+  dnf:
+    name:
+      - http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_distribution_version }}.noarch.rpm
+      - http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ ansible_distribution_version }}.noarch.rpm
+
+- name: Install workstation packages
+  become: yes
+  dnf:
+    name:
+      - pass
+      - gnome-terminal-nautilus
+      - jupyter-notebook
+      - VirtualBox
+      - vagrant
+      - libvirt
+      - https://prerelease.keybase.io/keybase_amd64.rpm
+
+- import_tasks: chrome.yml
+  tags: ["chrome"]
+
+- name: Install LaTeX packages
+  import_tasks: latex.yml
+  tags: ["latex"]
+
+- name: Install kubectl
+  import_tasks: kubectl.yml
+  tags: ["binaries", "kubectl"]
+
+- name: Install kind
+  import_tasks: kind.yml
+  tags: ["binaries", "kind"]
+
+- name: Install minikube
+  import_tasks: minikube.yml
+  tags: ["binaries", "minikube"]
+
+- name: Install starship
+  import_tasks: starship.yml
+  tags: ["binaries", "starship"]
+
+- name: Install sops
+  import_tasks: sops.yml
+  tags: ["binaries", "sops"]
+
+- name: Install flatpaks
+  import_tasks: flatpaks.yml
+  tags: ["flatpaks"]

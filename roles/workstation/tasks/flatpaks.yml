@@ -1,0 +1,26 @@
+- name: Add flathub repo if needed
+  flatpak_remote:
+    name: flathub
+    flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
+  ignore_errors: yes
+
+- name: Install flatpaks
+  flatpak:
+    name: "{{ item }}"
+  loop:
+      - com.bitwarden.desktop
+      - io.atom.Atom
+      - org.gnome.gitg
+      - org.gnome.meld
+      - org.gnome.DejaDup
+      - org.gnome.Polari
+      - org.filezillaproject.Filezilla
+      - com.slack.Slack
+      - org.videolan.VLC
+      - com.getpostman.Postman
+      - org.telegram.desktop
+      - org.octave.Octave
+      - org.nextcloud.Nextcloud
+      - com.valvesoftware.Steam
+
+# TODO: flatpak override com.valvesoftware.Steam --filesystem=/media/Data

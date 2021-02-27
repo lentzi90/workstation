@@ -1,0 +1,13 @@
+- name: Find latest version of kind
+  uri:
+    url: https://api.github.com/repos/kubernetes-sigs/kind/releases/latest
+    return_content: yes
+  register: latest_release
+
+- name: Download kind
+  become: yes
+  get_url:
+    url: https://github.com/kubernetes-sigs/kind/releases/download/{{ (latest_release.content | from_json).tag_name }}/kind-linux-amd64
+    dest: /usr/local/bin/kind
+    mode: "u=xrw,g=xr,o=x"
+    force: yes
