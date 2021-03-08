@@ -20,9 +20,6 @@
 - import_tasks: chrome.yml
   tags: ["chrome"]
 
-- name: Install LaTeX packages
-  import_tasks: latex.yml
-  tags: ["latex"]
 
 - name: Install kubectl
   import_tasks: kubectl.yml

@@ -22,5 +22,6 @@
       - org.octave.Octave
       - org.nextcloud.Nextcloud
       - com.valvesoftware.Steam
+      - org.texstudio.TeXstudio
 
 # TODO: flatpak override com.valvesoftware.Steam --filesystem=/media/Data
