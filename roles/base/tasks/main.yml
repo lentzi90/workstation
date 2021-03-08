@@ -1,5 +1,6 @@
 - name: Install base packages
   become: yes
+  when: ansible_distribution == 'Fedora'
   dnf:
     name:
       - python3-libselinux
@@ -17,6 +18,22 @@
       - tar
       - byobu
 
+- name: Install base packages
+  become: yes
+  when: ansible_distribution == 'Ubuntu'
+  package:
+    name:
+      - git
+      - htop
+      - screenfetch
+      - unzip
+      - vim
+      - hunspell-sv
+      - logrotate
+      - nfs-common
+      - wget
+      - tar
+      - byobu
 
 - name: Add starship config
   copy:

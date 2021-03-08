@@ -1,5 +1,6 @@
 - name: Install the rpmfusion repo packages
   become: yes
+  when: ansible_distribution == 'Fedora'
   dnf:
     name:
       - http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_distribution_version }}.noarch.rpm
@@ -7,6 +8,7 @@
 
 - name: Install workstation packages
   become: yes
+  when: ansible_distribution == 'Fedora'
   dnf:
     name:
       - pass
@@ -17,9 +19,32 @@
       - libvirt
       - https://prerelease.keybase.io/keybase_amd64.rpm
 
-- import_tasks: chrome.yml
-  tags: ["chrome"]
+- name: Install workstation packages
+  become: yes
+  when: ansible_distribution == 'Ubuntu'
+  package:
+    name:
+      - flatpak
+      - pass
+      - nautilus-extension-gnome-terminal
+      - jupyter-notebook
+      - virtualbox
+      - vagrant
+      - qemu-kvm
+      - libvirt-daemon-system
+      - libvirt-clients
+      - bridge-utils
 
+# TODO: Keybase
+
+- import_tasks: chrome_fedora.yml
+  become: yes
+  when: ansible_distribution == 'Fedora'
+  tags: ["chrome"]
+- import_tasks: chrome_ubuntu.yml
+  become: yes
+  when: ansible_distribution == 'Ubuntu'
+  tags: ["chrome"]
 
 - name: Install kubectl
   import_tasks: kubectl.yml
