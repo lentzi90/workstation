@@ -1,0 +1,24 @@
+---
+# - name: Find latest version of golang
+#   uri:
+#     url: TODO
+#     return_content: yes
+#   register: latest_release
+
+# TODO: Clean up old versions before installing new...
+
+- name: Download, extract and install golang
+  become: yes
+  unarchive:
+    src: "https://golang.org/dl/go1.16.2.linux-amd64.tar.gz"
+    dest: /usr/local/
+    remote_src: yes
+
+- name: Add go to path
+  become: no
+  blockinfile:
+    content: |
+      # Golang
+      export PATH=$PATH:/usr/local/go/bin
+    path: /home/{{ ansible_user }}/.profile
+    marker: "# {mark} ANSIBLE MANAGED BLOCK GOLANG"

@@ -37,6 +37,9 @@
 
 # TODO: Keybase
 
+- import_tasks: golang.yml
+  tags: ["golang"]
+
 - import_tasks: chrome_fedora.yml
   become: yes
   when: ansible_distribution == 'Fedora'
