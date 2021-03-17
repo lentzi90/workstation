@@ -1,0 +1,9 @@
+[Unit]
+Description=YubiKey waiting for touch notify
+
+[Service]
+ExecStart=/usr/local/bin/yubikey-touch-detector
+EnvironmentFile=-%E/yubikey-touch-detector/service.conf
+
+[Install]
+WantedBy=default.target

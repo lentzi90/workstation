@@ -1,0 +1,35 @@
+---
+- name: Find latest version of yubikey-touch-detector
+  uri:
+    url: https://api.github.com/repos/maximbaz/yubikey-touch-detector/releases/latest
+    return_content: yes
+  register: latest_release
+
+- name: Download, extract and install yubikey-touch-detector
+  become: yes
+  unarchive:
+    src: "https://github.com/maximbaz/yubikey-touch-detector/releases/download/{{ (latest_release.content | from_json).tag_name }}/yubikey-touch-detector-{{ (latest_release.content | from_json).tag_name }}-linux64.tar.gz"
+    dest: /usr/local/bin/
+    remote_src: yes
+    extra_opts:
+      # Skip the folder
+      - --strip=1
+      # The specific file(s) to extract
+      - yubikey-touch-detector-{{ (latest_release.content | from_json).tag_name }}-linux64/yubikey-touch-detector
+
+- name: Ensure user systemd folder
+  file:
+    path: /home/{{ ansible_user_id }}/.config/systemd/user
+    state: directory
+
+- name: Add systemd unit for yubikey-touch-detector
+  copy:
+    src: yubikey-touch-detector.service
+    dest: /home/{{ ansible_user_id }}/.config/systemd/user/yubikey-touch-detector.service
+
+- name: Enable yubikey-touch-detector service
+  systemd:
+    name: yubikey-touch-detector
+    state: started
+    enabled: yes
+    scope: user
