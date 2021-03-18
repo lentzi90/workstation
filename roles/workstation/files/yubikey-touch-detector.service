@@ -2,7 +2,7 @@
 Description=YubiKey waiting for touch notify
 
 [Service]
-ExecStart=/usr/local/bin/yubikey-touch-detector
+ExecStart=/usr/local/bin/yubikey-touch-detector -libnotify
 EnvironmentFile=-%E/yubikey-touch-detector/service.conf
 
 [Install]
