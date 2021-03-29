@@ -1,0 +1,30 @@
+---
+- name: Find latest version of helm
+  when: helm_version is not defined
+  uri:
+    url: https://api.github.com/repos/helm/helm/releases/latest
+    return_content: yes
+  register: latest_release
+
+- name: Set helm version
+  when: helm_version is not defined
+  set_fact:
+    helm_version: "{{ (latest_release.content | from_json).tag_name }}"
+
+- name: Download helm
+  become: yes
+  unarchive:
+    src: "https://get.helm.sh/helm-{{ helm_version }}-linux-amd64.tar.gz"
+    dest: /usr/local/bin/
+    remote_src: yes
+    extra_opts:
+      # Skip the folder
+      - --strip=1
+      # The specific file(s) to extract
+      - linux-amd64/helm
+
+- name: Make helm executable
+  become: yes
+  file:
+    path: /usr/local/bin/helm
+    mode: "u=xrw,g=xr,o=x"

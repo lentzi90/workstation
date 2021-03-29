@@ -53,6 +53,10 @@
   import_tasks: kubectl.yml
   tags: ["binaries", "kubectl"]
 
+- name: Install helm
+  import_tasks: helm.yml
+  tags: ["binaries", "helm"]
+
 - name: Install kind
   import_tasks: kind.yml
   tags: ["binaries", "kind"]
