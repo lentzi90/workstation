@@ -1,5 +1,9 @@
 ---
 - hosts: all
   roles:
-    - base
-    - workstation
+    - role: versions
+      tags: [versions]
+    - role: base
+      tags: [base]
+    - role: workstation
+      tags: [workstation]

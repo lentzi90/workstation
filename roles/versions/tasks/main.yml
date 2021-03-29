@@ -1,0 +1,30 @@
+---
+- name: Initialize version list
+  set_fact:
+    binaries:
+      - { name: helm, repo: helm/helm }
+      - { name: starship, repo: starship/starship }
+      - { name: sops, repo: mozilla/sops }
+
+- name: Find latest versions
+  uri:
+    url: https://api.github.com/repos/{{ item.repo }}/releases/latest
+    return_content: yes
+  register: latest_release
+  loop: "{{ binaries }}"
+
+- name: Parse data
+  set_fact:
+    json_blobs: "{{ latest_release | json_query('results[*].content') | map('from_json') | list }}"
+- name: Set version tags
+  set_fact:
+    version_tags: "{{ json_blobs | map(attribute='tag_name') | list }}"
+
+- name: Set nice versions
+  set_fact:
+    latest_versions: "{{ dict( binaries | json_query('[*].name') | zip(version_tags) ) }}"
+
+- name: Write versions to file
+  template:
+    src: versions.yaml.j2
+    dest: versions.yaml

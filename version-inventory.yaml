@@ -1,0 +1,8 @@
+all:
+  hosts:
+    localhost:
+      ansible_connection: local
+      ansible_python_interpreter: /usr/bin/python3
+      # kubectl_version: v1.20.4
+      # helm_version: v3.5.0
+      # sops_version: v3.6.1

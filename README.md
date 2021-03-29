@@ -19,3 +19,13 @@ git clone https://github.com/lentzi90/workstation.git
 cd workstation
 ansible-playbook -i inventory.ini setup.yml -K
 ```
+
+## Get latest versions
+
+Check what the latest versions of some binaries are:
+
+```bash
+ansible-playbook -i inventory.ini setup.yml --tags=versions
+```
+
+This will generate the file `versions.yaml` with version numbers that can be used to set the versions you want to freeze.
