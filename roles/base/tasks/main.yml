@@ -35,7 +35,7 @@
       - tar
       - byobu
 
-- name: Add starship config
+- name: Copy public PGP key
   copy:
     src: PGP-public-key.txt
     dest: /home/{{ ansible_user_id }}/PGP-public-key.txt
