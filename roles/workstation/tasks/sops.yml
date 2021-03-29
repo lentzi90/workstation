@@ -1,18 +1,30 @@
 ---
 - name: Find latest version of sops
+  when: sops_version is not defined
   uri:
     url: https://api.github.com/repos/mozilla/sops/releases/latest
     return_content: yes
   register: latest_release
 
 - name: Get sops latest tag name
+  when: sops_version is not defined
   set_fact:
-    sops_tag: "{{ (latest_release.content | from_json).tag_name }}"
+    sops_version: "{{ (latest_release.content | from_json).tag_name }}"
+
+- name: Check current sops version
+  command: sops --version
+  register: sops_output
+
+- name: Set current sops version
+  set_fact:
+    # Find the current sops version. Output if of the form "sops x.y.z" and we want to turn it into "vx.y.z"
+    current_sops_version: "v{{ sops_output.stdout_lines[0] | regex_search('([0-9]+\\.){2}[0-9]+') }}"
 
 - name: Download and install sops
+  when: current_sops_version != sops_version
   become: yes
   get_url:
-    url: "https://github.com/mozilla/sops/releases/download/{{ sops_tag }}/sops-{{ sops_tag }}.linux"
+    url: "https://github.com/mozilla/sops/releases/download/{{ sops_version }}/sops-{{ sops_version }}.linux"
     dest: /usr/local/bin/sops
     mode: "u=xrw,g=xr,o=x"
     force: yes
