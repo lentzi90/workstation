@@ -23,7 +23,7 @@
   when: current_starship_version != starship_version
   become: yes
   unarchive:
-    src: "https://github.com/starship/starship/releases/download/{{ (latest_release.content | from_json).tag_name }}/starship-x86_64-unknown-linux-gnu.tar.gz"
+    src: "https://github.com/starship/starship/releases/download/{{ starship_version }}/starship-x86_64-unknown-linux-gnu.tar.gz"
     dest: /usr/local/bin/
     remote_src: yes
 
