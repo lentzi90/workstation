@@ -11,7 +11,16 @@
   set_fact:
     helm_version: "{{ (latest_release.content | from_json).tag_name }}"
 
+- name: Check current helm version
+  command: helm version --template "{{'{{'}}.Version{{'}}'}}"
+  register: helm_output
+
+- name: Set current helm version
+  set_fact:
+    current_helm_version: "{{ helm_output.stdout }}"
+
 - name: Download helm
+  when: current_helm_version != helm_version
   become: yes
   unarchive:
     src: "https://get.helm.sh/helm-{{ helm_version }}-linux-amd64.tar.gz"
