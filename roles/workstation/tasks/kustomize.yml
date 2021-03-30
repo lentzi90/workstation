@@ -1,0 +1,30 @@
+---
+- name: Find latest version of kustomize
+  uri:
+    url: https://api.github.com/repos/kubernetes-sigs/kustomize/releases/latest
+    return_content: yes
+  register: latest_release
+
+- name: Set kustomize version
+  when: kustomize_version is not defined
+  set_fact:
+    # Kustomize has multiple components which means that they use tags like "kustomize/vx.y.z", so we have to parse it a bit.
+    kustomize_version: "{{ (latest_release.content | from_json).tag_name | regex_search('v([0-9]+\\.){2}[0-9]+') }}"
+
+- name: Check current kustomize version
+  command: kustomize version
+  register: kustomize_output
+
+- name: Set current kustomize version
+  set_fact:
+    # Find the current kustomize version. Output if of the form
+    # {Version:kustomize/v4.0.5 GitCommit:9e8e7a7fe99ec9fbf801463e8607928322fc5245 BuildDate:2021-03-08T20:53:03Z GoOs:linux GoArch:amd64}
+    current_kustomize_version: "{{ kustomize_output.stdout_lines[0] | regex_search('v([0-9]+\\.){2}[0-9]+') }}"
+
+- name: Download, extract and install kustomize
+  # when: current_kustomize_version != kustomize_version
+  become: yes
+  unarchive:
+    src: "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2F{{ kustomize_version }}/kustomize_{{ kustomize_version }}_linux_amd64.tar.gz"
+    dest: /usr/local/bin/
+    remote_src: yes

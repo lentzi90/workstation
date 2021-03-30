@@ -5,6 +5,7 @@
       - { name: helm, repo: helm/helm }
       - { name: starship, repo: starship/starship }
       - { name: sops, repo: mozilla/sops }
+      - { name: kustomize, repo: kubernetes-sigs/kustomize}
 
 - name: Find latest versions
   uri:
