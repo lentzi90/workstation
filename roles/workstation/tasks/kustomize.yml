@@ -1,15 +1,20 @@
 ---
-- name: Find latest version of kustomize
+  # Note that kustomize has multiple components and it is not guaranteed that
+  # the `kustomize` binary will be the latest release. Therefore we need
+  # to check them all and find the latest that starts with "kustomize"
+- name: Find latest versions of kustomize
   uri:
-    url: https://api.github.com/repos/kubernetes-sigs/kustomize/releases/latest
+    url: https://api.github.com/repos/kubernetes-sigs/kustomize/releases
     return_content: yes
-  register: latest_release
+  register: releases
 
 - name: Set kustomize version
   when: kustomize_version is not defined
   set_fact:
     # Kustomize has multiple components which means that they use tags like "kustomize/vx.y.z", so we have to parse it a bit.
-    kustomize_version: "{{ (latest_release.content | from_json).tag_name | regex_search('v([0-9]+\\.){2}[0-9]+') }}"
+    kustomize_version: "{{ releases.content | from_json | json_query(query) | first | regex_search('v([0-9]+\\.){2}[0-9]+') }}"
+  vars:
+    query: "[?starts_with(tag_name, 'kustomize')].tag_name"
 
 - name: Check current kustomize version
   command: kustomize version
