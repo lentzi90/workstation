@@ -1,7 +1,30 @@
+- name: Find latest version of minikube
+  when: minikube_version is not defined
+  uri:
+    url: https://api.github.com/repos/kubernetes/minikube/releases/latest
+    return_content: yes
+  register: latest_release
+
+- name: Set minikube version
+  when: minikube_version is not defined
+  set_fact:
+    minikube_version: "{{ (latest_release.content | from_json).tag_name }}"
+
+- name: Check current minikube version
+  command: minikube version --output json
+  register: minikube_output
+  ignore_errors: yes
+  changed_when: False
+
+- name: Set current minikube version
+  set_fact:
+    current_minikube_version: "{{ (minikube_output.stdout | from_json).minikubeVersion | default('none') }}"
+
 - name: Download minikube
+  when: current_minikube_version != minikube_version
   become: yes
   get_url:
-    url: https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+    url: https://github.com/kubernetes-sigs/minikube/releases/download/{{ minikube_version }}/minikube-linux-amd64
     dest: /usr/local/bin/minikube
     mode: "u=xrw,g=xr,o=x"
     force: yes
