@@ -1,13 +1,30 @@
 - name: Find latest version of kind
+  when: kind_version is not defined
   uri:
     url: https://api.github.com/repos/kubernetes-sigs/kind/releases/latest
     return_content: yes
   register: latest_release
 
+- name: Set kind version
+  when: kind_version is not defined
+  set_fact:
+    kind_version: "{{ (latest_release.content | from_json).tag_name }}"
+
+- name: Check current kind version
+  command: kind version
+  register: kind_output
+  ignore_errors: yes
+  changed_when: False
+
+- name: Set current kind version
+  set_fact:
+    current_kind_version: "{{ kind_output.stdout_lines[0] | regex_search('v([0-9]+\\.){2}[0-9]+') | default('none') }}"
+
 - name: Download kind
+  when: current_kind_version != kind_version
   become: yes
   get_url:
-    url: https://github.com/kubernetes-sigs/kind/releases/download/{{ (latest_release.content | from_json).tag_name }}/kind-linux-amd64
+    url: https://github.com/kubernetes-sigs/kind/releases/download/{{ kind_version }}/kind-linux-amd64
     dest: /usr/local/bin/kind
     mode: "u=xrw,g=xr,o=x"
     force: yes
