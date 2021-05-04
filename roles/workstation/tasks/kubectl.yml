@@ -14,10 +14,12 @@
 - name: Check current kubectl version
   command: kubectl version --client=true -o json
   register: kubectl_output
+  ignore_errors: yes
+  changed_when: False
 
 - name: Set current kubectl version
   set_fact:
-    current_kubectl_version: "{{ (kubectl_output.stdout | from_json).clientVersion.gitVersion }}"
+    current_kubectl_version: "{{ (kubectl_output.stdout | from_json).clientVersion.gitVersion | default('none') }}"
 
 - name: Download kubectl
   when: current_kubectl_version != kubectl_version

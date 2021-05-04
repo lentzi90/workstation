@@ -14,10 +14,12 @@
 - name: Check current helm version
   command: helm version --template "{{'{{'}}.Version{{'}}'}}"
   register: helm_output
+  ignore_errors: yes
+  changed_when: False
 
 - name: Set current helm version
   set_fact:
-    current_helm_version: "{{ helm_output.stdout }}"
+    current_helm_version: "{{ helm_output.stdout | default('none') }}"
 
 - name: Download helm
   when: current_helm_version != helm_version
