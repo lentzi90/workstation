@@ -5,7 +5,10 @@
       - { name: helm, repo: helm/helm }
       - { name: starship, repo: starship/starship }
       - { name: sops, repo: mozilla/sops }
-      - { name: kustomize, repo: kubernetes-sigs/kustomize}
+      - { name: kustomize, repo: kubernetes-sigs/kustomize }
+      - { name: kind, repo: kubernetes-sigs/kind }
+      - { name: minikube, repo: kubernetes/minikube }
+      - { name: kubernetes, repo: kubernetes/kubernetes }
 
 - name: Find latest versions
   uri:
@@ -14,6 +17,9 @@
   register: latest_release
   loop: "{{ binaries }}"
 
+# TODO: Kustomize has veird tags that may need special treatment.
+# TODO: Kubernetes (and maybe others as well) support multiple minor versions.
+#       Find the latest patch of the latest minor release!
 - name: Parse data
   set_fact:
     json_blobs: "{{ latest_release | json_query('results[*].content') | map('from_json') | list }}"
