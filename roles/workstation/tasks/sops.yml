@@ -18,12 +18,13 @@
   changed_when: False
 
 - name: Set current sops version
+  when: sops_output is succeeded
   set_fact:
     # Find the current sops version. Output if of the form "sops x.y.z" and we want to turn it into "vx.y.z"
-    current_sops_version: "v{{ sops_output.stdout_lines[0] | regex_search('([0-9]+\\.){2}[0-9]+') | default('none') }}"
+    current_sops_version: "v{{ sops_output.stdout_lines[0] | regex_search('([0-9]+\\.){2}[0-9]+') }}"
 
 - name: Download and install sops
-  when: current_sops_version != sops_version
+  when: current_sops_version | default('none') != sops_version
   become: yes
   get_url:
     url: "https://github.com/mozilla/sops/releases/download/{{ sops_version }}/sops-{{ sops_version }}.linux"

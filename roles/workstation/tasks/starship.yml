@@ -17,12 +17,13 @@
   changed_when: False
 
 - name: Set current starship version
+  when: starship_output is succeeded
   set_fact:
     # Find the current starship version. Output if of the form "starship x.y.z" and we want to turn it into "vx.y.z"
-    current_starship_version: "v{{ starship_output.stdout_lines[0] | regex_search('([0-9]+\\.){2}[0-9]+') | default('none') }}"
+    current_starship_version: "v{{ starship_output.stdout_lines[0] | regex_search('([0-9]+\\.){2}[0-9]+') }}"
 
 - name: Download, extract and install starship
-  when: current_starship_version != starship_version
+  when: current_starship_version | default('none') != starship_version
   become: yes
   unarchive:
     src: "https://github.com/starship/starship/releases/download/{{ starship_version }}/starship-x86_64-unknown-linux-gnu.tar.gz"

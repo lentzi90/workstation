@@ -18,11 +18,12 @@
   changed_when: False
 
 - name: Set current kubectl version
+  when: kubectl_output is succeeded
   set_fact:
-    current_kubectl_version: "{{ (kubectl_output.stdout | from_json).clientVersion.gitVersion | default('none') }}"
+    current_kubectl_version: "{{ (kubectl_output.stdout | from_json).clientVersion.gitVersion }}"
 
 - name: Download kubectl
-  when: current_kubectl_version != kubectl_version
+  when: current_kubectl_version | default('none') != kubectl_version
   become: yes
   get_url:
     url: "https://storage.googleapis.com/kubernetes-release/release/{{ kubectl_version }}/bin/linux/amd64/kubectl"

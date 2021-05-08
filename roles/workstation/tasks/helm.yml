@@ -18,11 +18,12 @@
   changed_when: False
 
 - name: Set current helm version
+  when: helm_output is succeeded
   set_fact:
-    current_helm_version: "{{ helm_output.stdout | default('none') }}"
+    current_helm_version: "{{ helm_output.stdout }}"
 
 - name: Download helm
-  when: current_helm_version != helm_version
+  when: current_helm_version | default('none') != helm_version
   become: yes
   unarchive:
     src: "https://get.helm.sh/helm-{{ helm_version }}-linux-amd64.tar.gz"
