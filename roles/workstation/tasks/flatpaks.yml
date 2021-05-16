@@ -24,5 +24,6 @@
       - org.nextcloud.Nextcloud
       - com.valvesoftware.Steam
       - org.texstudio.TeXstudio
+      - org.libreoffice.LibreOffice
 
 # TODO: flatpak override com.valvesoftware.Steam --filesystem=/media/Data

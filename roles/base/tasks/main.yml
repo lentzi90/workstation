@@ -1,6 +1,6 @@
 - name: Install base packages
   become: yes
-  when: ansible_distribution == 'Fedora'
+  when: ansible_distribution == 'Fedora' and ansible_pkg_mgr != 'atomic_container'
   dnf:
     name:
       - python3-libselinux
@@ -35,6 +35,16 @@
       - tar
       - byobu
 
+- name: Install base packages
+  become: yes
+  # Silverblue
+  when: ansible_pkg_mgr == 'atomic_container'
+  community.general.rpm_ostree_pkg:
+    name:
+      - ansible
+      - byobu
+      - arm-image-installer
+
 - name: Copy public PGP key
   copy:
     src: PGP-public-key.txt
@@ -46,3 +56,4 @@
 # TODO:
 # - Restart pcscd?
 # - Configure scdaemon.conf "reader-port Yubico Yubi"?
+# - Configure git?

@@ -1,6 +1,6 @@
 - name: Install the rpmfusion repo packages
   become: yes
-  when: ansible_distribution == 'Fedora'
+  when: ansible_distribution == 'Fedora' and ansible_pkg_mgr != 'atomic_container'
   dnf:
     name:
       - http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_distribution_version }}.noarch.rpm
@@ -8,7 +8,7 @@
 
 - name: Install workstation packages
   become: yes
-  when: ansible_distribution == 'Fedora'
+  when: ansible_distribution == 'Fedora' and ansible_pkg_mgr != 'atomic_container'
   dnf:
     name:
       - pass
@@ -42,7 +42,7 @@
 
 - import_tasks: chrome_fedora.yml
   become: yes
-  when: ansible_distribution == 'Fedora'
+  when: ansible_distribution == 'Fedora' and ansible_pkg_mgr != 'atomic_container'
   tags: ["chrome"]
 - import_tasks: chrome_ubuntu.yml
   become: yes

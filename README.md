@@ -6,6 +6,14 @@ Fedora:
 sudo dnf install git ansible
 ```
 
+Fedora Silverblue
+
+```bash
+rpm-ostree install ansible
+systemctl reboot
+ansible-galaxy collection install community.general
+```
+
 Ubuntu:
 
 ```bash
