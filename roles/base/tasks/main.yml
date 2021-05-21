@@ -34,6 +34,11 @@
       - wget
       - tar
       - byobu
+      - scdaemon
+      - pcscd
+      - libssl-dev
+      - swig
+      - libpcsclite-dev
 
 - name: Install base packages
   become: yes
@@ -53,7 +58,13 @@
 - name: Import PGP public key
   command: gpg --import /home/{{ ansible_user_id }}/PGP-public-key.txt
 
+# TODO: check value first instead of just overwriting every time
+- name: Set name for git
+  command: git config --global user.name "Lennart Jern"
+- name: Set signing key for git
+  command: git config --global user.signingkey 3820F67B590431A8E2ECBBC88CC3ECACCE12D523
+
 # TODO:
 # - Restart pcscd?
 # - Configure scdaemon.conf "reader-port Yubico Yubi"?
-# - Configure git?
+# - Configure git email?
