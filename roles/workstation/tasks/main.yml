@@ -40,6 +40,9 @@
 - import_tasks: golang.yml
   tags: ["golang"]
 
+- import_tasks: pre-commit.yml
+  tags: ["pre-commit"]
+
 - import_tasks: chrome_fedora.yml
   become: yes
   when: ansible_distribution == 'Fedora' and ansible_pkg_mgr != 'atomic_container'

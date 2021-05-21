@@ -1,0 +1,10 @@
+---
+- name: Download installation script
+  get_url:
+    url: https://pre-commit.com/install-local.py
+    dest: /tmp/install-local.py
+
+- name: Install pre-commit
+  command: python3 install-local.py
+
+# TODO: Ensure pre-commit is in the path!
