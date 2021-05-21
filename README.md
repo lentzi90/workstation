@@ -11,7 +11,6 @@ Fedora Silverblue
 ```bash
 rpm-ostree install ansible
 systemctl reboot
-ansible-galaxy collection install community.general
 ```
 
 Ubuntu:
@@ -23,10 +22,16 @@ sudo apt install git ansible
 Common:
 
 ```bash
+ansible-galaxy collection install community.general
 git clone https://github.com/lentzi90/workstation.git
 cd workstation
 ansible-playbook -i inventory.ini setup.yml -K
 ```
+
+## Install extras
+
+Not everything is installed by default.
+To install everything, add `-e install_extras=true`.
 
 ## Get latest versions
 
