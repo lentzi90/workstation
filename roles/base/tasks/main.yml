@@ -61,8 +61,9 @@
 # TODO: check value first instead of just overwriting every time
 - name: Set name for git
   command: git config --global user.name "Lennart Jern"
-- name: Set signing key for git
-  command: git config --global user.signingkey 3820F67B590431A8E2ECBBC88CC3ECACCE12D523
+# TODO: Prompt for email and key to use?
+# - name: Set signing key for git
+#   command: git config --global user.signingKey 3820F67B590431A8E2ECBBC88CC3ECACCE12D523
 
 # TODO:
 # - Restart pcscd?
