@@ -1,0 +1,30 @@
+---
+- name: Find latest version of tilt
+  uri:
+    url: https://api.github.com/repos/tilt-dev/tilt/releases/latest
+    return_content: yes
+  register: latest_release
+
+- name: Set tilt version
+  when: tilt_version is not defined
+  set_fact:
+    tilt_version: "{{ (latest_release.content | from_json).tag_name }}"
+
+- name: Check current tilt version
+  command: tilt version
+  register: tilt_output
+  ignore_errors: yes
+  changed_when: False
+
+- name: Set current tilt version
+  when: tilt_output is succeeded
+  set_fact:
+    current_tilt_version: "{{ tilt_output.stdout_lines[0] | regex_search('v([0-9]+\\.){2}[0-9]+') }}"
+
+- name: Download, extract and install tilt
+  when: current_tilt_version | default('none') != tilt_version
+  become: yes
+  unarchive:
+    src: "https://github.com/tilt-dev/tilt/releases/download/{{ tilt_version }}/tilt.{{ tilt_version | replace('v', '') }}.linux.x86_64.tar.gz"
+    dest: /usr/local/bin/
+    remote_src: yes

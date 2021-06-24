@@ -80,6 +80,10 @@
   import_tasks: sops.yml
   tags: ["binaries", "sops"]
 
+- name: Install tilt
+  import_tasks: tilt.yml
+  tags: ["binaries", "tilt"]
+
 - import_tasks: yubikey-touch-detector.yml
   tags: ["binaries", "yubikey-touch-detector"]
 
