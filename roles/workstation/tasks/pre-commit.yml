@@ -6,5 +6,7 @@
 
 - name: Install pre-commit
   command: python3 install-local.py
+  args:
+    chdir: /tmp
 
 # TODO: Ensure pre-commit is in the path!
