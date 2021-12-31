@@ -1,16 +1,35 @@
 ---
-# - name: Find latest version of golang
-#   uri:
-#     url: TODO
-#     return_content: yes
-#   register: latest_release
+- name: Find golang tags
+  ansible.builtin.command: git ls-remote --sort="-version:refname" --tags https://github.com/golang/go.git
+  register: golang_tags
 
-# TODO: Clean up old versions before installing new...
+- name: Set golang version
+  set_fact:
+    golang_version: "{{golang_tags.stdout | regex_search('go([0-9]+\\.){2}[0-9]+') }}"
+
+- name: Check current golang version
+  command: go version
+  register: go_output
+  ignore_errors: yes
+  changed_when: False
+
+- name: Set current golang version
+  when: go_output is succeeded
+  set_fact:
+    current_golang_version: "{{ go_output.stdout_lines[0] | regex_search('go([0-9]+\\.){2}[0-9]+') }}"
+
+- name: Remove old golang installation
+  when: current_golang_version | default('none') != golang_version
+  become: yes
+  ansible.builtin.file:
+    path: /usr/local/go
+    state: absent
 
 - name: Download, extract and install golang
+  when: current_golang_version | default('none') != golang_version
   become: yes
   unarchive:
-    src: "https://golang.org/dl/go1.16.2.linux-amd64.tar.gz"
+    src: "https://golang.org/dl/{{ golang_version }}.linux-amd64.tar.gz"
     dest: /usr/local/
     remote_src: yes
 
