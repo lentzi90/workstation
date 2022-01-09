@@ -60,6 +60,10 @@
   import_tasks: kustomize.yml
   tags: ["binaries", "kustomize"]
 
+- name: Install SopsSecretGenerator
+  import_tasks: sopssecretgenerator.yml
+  tags: ["binaries", "sopssecretgenerator"]
+
 - name: Install helm
   import_tasks: helm.yml
   tags: ["binaries", "helm"]
