@@ -1,17 +1,8 @@
-- name: Install the rpmfusion repo packages
-  become: yes
-  when: ansible_distribution == 'Fedora' and ansible_pkg_mgr != 'atomic_container'
-  dnf:
-    name:
-      - http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_distribution_version }}.noarch.rpm
-      - http://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ ansible_distribution_version }}.noarch.rpm
-
 - name: Install workstation packages
   become: yes
   when: ansible_distribution == 'Fedora' and ansible_pkg_mgr != 'atomic_container'
   dnf:
     name:
-      - pass
       - gnome-terminal-nautilus
       - jupyter-notebook
       - VirtualBox
@@ -25,7 +16,6 @@
   package:
     name:
       - flatpak
-      - pass
       - nautilus-extension-gnome-terminal
       - jupyter-notebook
       - virtualbox
@@ -34,8 +24,6 @@
       - libvirt-daemon-system
       - libvirt-clients
       - bridge-utils
-
-# TODO: Keybase
 
 - import_tasks: golang.yml
   tags: ["golang"]
