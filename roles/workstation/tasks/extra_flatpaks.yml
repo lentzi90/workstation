@@ -1,11 +1,9 @@
 - name: Install extra flatpaks
-  flatpak:
-    name: "{{ item }}"
-  loop:
+  community.general.flatpak:
+    name:
       - org.octave.Octave
       - org.nextcloud.Nextcloud
       - com.valvesoftware.Steam
       - org.texstudio.TeXstudio
-      - org.libreoffice.LibreOffice
 
 # TODO: flatpak override com.valvesoftware.Steam --filesystem=/media/Data

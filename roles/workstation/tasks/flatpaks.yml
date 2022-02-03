@@ -1,14 +1,13 @@
 - name: Add flathub repo if needed
   become: yes
-  flatpak_remote:
+  community.general.flatpak_remote:
     name: flathub
     flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
   ignore_errors: yes
 
 - name: Install flatpaks
-  flatpak:
-    name: "{{ item }}"
-  loop:
+  community.general.flatpak:
+    name:
       - com.bitwarden.desktop
       - io.atom.Atom
       - org.gnome.gitg
