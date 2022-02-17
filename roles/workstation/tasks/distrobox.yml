@@ -1,0 +1,36 @@
+---
+- name: Find latest version of distrobox
+  uri:
+    url: https://api.github.com/repos/89luca89/distrobox/releases/latest
+    return_content: yes
+  register: latest_release
+
+- name: Set distrobox version
+  when: distrobox_version is not defined
+  set_fact:
+    distrobox_version: "{{ (latest_release.content | from_json).tag_name }}"
+
+- name: Check current distrobox version
+  command: distrobox --version
+  register: distrobox_output
+  ignore_errors: yes
+  changed_when: False
+
+- name: Set current distrobox version
+  when: distrobox_output is succeeded
+  set_fact:
+    current_distrobox_version: "{{ distrobox_output.stdout_lines[0] | regex_search('([0-9]+\\.){2}[0-9]+') }}"
+
+- name: Download, extract and install distrobox
+  when: current_distrobox_version | default('none') != distrobox_version
+  become: yes
+  unarchive:
+    src: "https://github.com/89luca89/distrobox/archive/refs/tags/{{ distrobox_version }}.tar.gz"
+    dest: /usr/local/bin/
+    remote_src: yes
+    extra_opts:
+      # Skip the folder
+      - --strip=1
+      - --wildcards
+      # The specific file(s) to extract
+      - distrobox-{{ distrobox_version }}/distrobox*

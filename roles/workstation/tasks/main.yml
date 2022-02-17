@@ -72,6 +72,9 @@
   import_tasks: sops.yml
   tags: ["binaries", "sops"]
 
+- import_tasks: distrobox.yml
+  tags: ["binaries", "distrobox"]
+
 - name: Install tilt
   import_tasks: tilt.yml
   tags: ["binaries", "tilt"]
