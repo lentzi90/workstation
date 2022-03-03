@@ -1,9 +1,11 @@
 ---
 - name: Find golang tags
+  when: golang_version is not defined
   ansible.builtin.command: git ls-remote --sort="-version:refname" --tags https://github.com/golang/go.git
   register: golang_tags
 
 - name: Set golang version
+  when: golang_version is not defined
   set_fact:
     golang_version: "{{golang_tags.stdout | regex_search('go([0-9]+\\.){2}[0-9]+') }}"
 
@@ -38,6 +40,6 @@
   blockinfile:
     content: |
       # Golang
-      export PATH=$PATH:/usr/local/go/bin
+      export PATH=$PATH:/usr/local/go/bin:/home/{{ ansible_user_id }}/go/bin
     path: /home/{{ ansible_user_id }}/.bashrc
     marker: "# {mark} ANSIBLE MANAGED BLOCK GOLANG"
