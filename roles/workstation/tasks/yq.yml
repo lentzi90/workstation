@@ -1,0 +1,31 @@
+- name: Find latest version of yq
+  when: yq_version is not defined
+  uri:
+    url: https://api.github.com/repos/mikefarah/yq/releases/latest
+    return_content: yes
+  register: latest_release
+
+- name: Set yq version
+  when: yq_version is not defined
+  set_fact:
+    yq_version: "{{ (latest_release.content | from_json).tag_name }}"
+
+- name: Check current yq version
+  command: yq --version
+  register: yq_output
+  ignore_errors: yes
+  changed_when: False
+
+- name: Set current yq version
+  when: yq_output is succeeded
+  set_fact:
+    current_yq_version: "{{ yq_output.stdout_lines[0] | regex_search('([0-9]+\\.){2}[0-9]+') }}"
+
+- name: Download yq
+  when: current_yq_version | default('none') != yq_version
+  become: yes
+  get_url:
+    url: https://github.com/mikefarah/yq/releases/download/v{{ yq_version }}/yq_linux_amd64
+    dest: /usr/local/bin/yq
+    mode: "u=xrw,g=xr,o=x"
+    force: yes

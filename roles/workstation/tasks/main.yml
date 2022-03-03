@@ -82,6 +82,9 @@
 - import_tasks: yubikey-touch-detector.yml
   tags: ["binaries", "yubikey-touch-detector"]
 
+- import_tasks: yq.yml
+  tags: ["binaries", "yq"]
+
 - name: Install flatpaks
   import_tasks: flatpaks.yml
   tags: ["flatpaks"]
