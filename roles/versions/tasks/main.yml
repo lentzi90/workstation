@@ -5,10 +5,14 @@
       - { name: helm, repo: helm/helm }
       - { name: starship, repo: starship/starship }
       - { name: sops, repo: mozilla/sops }
+      - { name: sopssecretgenerator, repo: goabout/kustomize-sopssecretgenerator }
       - { name: kustomize, repo: kubernetes-sigs/kustomize }
       - { name: kind, repo: kubernetes-sigs/kind }
       - { name: minikube, repo: kubernetes/minikube }
       - { name: kubernetes, repo: kubernetes/kubernetes }
+      - { name: distrobox, repo: 89luca89/distrobox }
+      - { name: tilt, repo: tilt-dev/tilt }
+      - { name: yq, repo: mikefarah/yq }
 
 - name: Find latest versions
   uri:
