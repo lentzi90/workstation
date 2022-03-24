@@ -34,7 +34,9 @@
   blockinfile:
     content: |
       # Starship
-      eval "$(starship init bash)"
+      if command -v starship; then
+          eval "$(starship init bash)"
+      fi
     path: /home/{{ ansible_user_id }}/.bashrc
     marker: "# {mark} ANSIBLE MANAGED BLOCK STARSHIP"
 
