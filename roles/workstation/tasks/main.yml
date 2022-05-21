@@ -25,10 +25,28 @@
       - libvirt-clients
       - bridge-utils
 
+- name: Install packages for silverblue
+  become: yes
+  when: ansible_pkg_mgr == 'atomic_container'
+  community.general.rpm_ostree_pkg:
+    name:
+      - arm-image-installer
+      - virt-manager
+      - libvirt
+      - gnome-boxes
+
+- name: Remove packages for silverblue
+  become: yes
+  when: ansible_pkg_mgr == 'atomic_container'
+  community.general.rpm_ostree_pkg:
+    name: firefox
+    state: absent
+
 - import_tasks: golang.yml
   tags: ["golang"]
 
 - import_tasks: pre-commit.yml
+  when: install_extras | default(false) | bool == true
   tags: ["pre-commit"]
 
 - import_tasks: chrome_fedora.yml
