@@ -42,3 +42,19 @@ ansible-playbook -i inventory.ini setup.yml --tags=versions
 ```
 
 This will generate the file `versions.yaml` with version numbers that can be used to set the versions you want to freeze.
+
+## Setup passwordless login and sudo using pam-u2f
+
+The playbooks will install the necessary packages, but not enable this by default due to the sensitivity of it.
+
+```bash
+mkdir ~/.config/Yubico
+pamu2fcfg > ~/.config/Yubico/u2f_keys
+# Fedora: Use authselect to enable pam-u2f
+sudo authselect enable-feature with-pam-u2f
+# Ubuntu: Edit common-auth to enable pam-u2f
+sudo vim /etc/pam.d/common-auth
+auth        sufficient                                   pam_u2f.so cue
+```
+
+P.S. There are some [udev rules that may be needed](https://support.yubico.com/hc/en-us/articles/360013708900-Using-Your-U2F-YubiKey-with-Linux).
