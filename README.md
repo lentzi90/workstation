@@ -43,6 +43,13 @@ ansible-playbook -i inventory.ini setup.yml --tags=versions
 
 This will generate the file `versions.yaml` with version numbers that can be used to set the versions you want to freeze.
 
+## Set git signing key and email
+
+```bash
+git config --global user.email <email>
+git config --global user.signingKey <key>
+```
+
 ## Setup passwordless login and sudo using pam-u2f
 
 The playbooks will install the necessary packages, but not enable this by default due to the sensitivity of it.
