@@ -1,0 +1,31 @@
+- name: Find latest version of clusterctl
+  when: clusterctl_version is not defined
+  uri:
+    url: https://api.github.com/repos/kubernetes-sigs/cluster-api/releases/latest
+    return_content: yes
+  register: latest_release
+
+- name: Set clusterctl version
+  when: clusterctl_version is not defined
+  set_fact:
+    clusterctl_version: "{{ (latest_release.content | from_json).tag_name }}"
+
+- name: Check current clusterctl version
+  command: clusterctl version -o short
+  register: clusterctl_output
+  ignore_errors: yes
+  changed_when: False
+
+- name: Set current clusterctl version
+  when: clusterctl_output is succeeded
+  set_fact:
+    current_clusterctl_version: "{{ clusterctl_output.stdout_lines[0] | regex_search('v([0-9]+\\.){2}[0-9]+') }}"
+
+- name: Download clusterctl
+  when: current_clusterctl_version | default('none') != clusterctl_version
+  become: yes
+  get_url:
+    url: https://github.com/kubernetes-sigs/cluster-api/releases/download/{{ clusterctl_version }}/clusterctl-linux-amd64
+    dest: /usr/local/bin/clusterctl
+    mode: "u=xrw,g=xr,o=x"
+    force: yes

@@ -81,6 +81,10 @@
   import_tasks: kind.yml
   tags: ["binaries", "kind"]
 
+- name: Install clusterctl
+  import_tasks: clusterctl.yml
+  tags: ["binaries", "clusterctl"]
+
 - name: Install minikube
   import_tasks: minikube.yml
   tags: ["binaries", "minikube"]
