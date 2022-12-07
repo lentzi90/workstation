@@ -38,13 +38,6 @@
       - pam-u2f
       - pamu2fcfg
 
-- name: Remove packages for silverblue
-  become: yes
-  when: ansible_pkg_mgr == 'atomic_container'
-  community.general.rpm_ostree_pkg:
-    name: firefox
-    state: absent
-
 - import_tasks: golang.yml
   tags: ["golang"]
 
