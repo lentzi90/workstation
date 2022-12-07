@@ -46,7 +46,6 @@
   when: ansible_pkg_mgr == 'atomic_container'
   community.general.rpm_ostree_pkg:
     name:
-      - ansible
       - byobu
       - arm-image-installer
 

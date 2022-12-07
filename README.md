@@ -9,8 +9,8 @@ sudo dnf install git ansible
 Fedora Silverblue
 
 ```bash
-rpm-ostree install ansible
-systemctl reboot
+python -m venv .venv
+source .venv/bin/activate
 ```
 
 Ubuntu:
