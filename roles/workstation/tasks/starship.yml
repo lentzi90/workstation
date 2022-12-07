@@ -34,7 +34,7 @@
   blockinfile:
     content: |
       # Starship
-      if command -v starship; then
+      if command -v starship > /dev/null; then
           eval "$(starship init bash)"
       fi
     path: /home/{{ ansible_user_id }}/.bashrc
