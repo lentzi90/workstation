@@ -27,11 +27,17 @@
     path: /usr/local/go
     state: absent
 
-- name: Download, extract and install golang
+- name: Download golang
+  when: current_golang_version | default('none') != golang_version
+  get_url:
+    url: "https://golang.org/dl/{{ golang_version }}.linux-amd64.tar.gz"
+    dest: /tmp/{{ golang_version }}.tar.gz
+
+- name: Extract and install golang
   when: current_golang_version | default('none') != golang_version
   become: yes
   unarchive:
-    src: "https://golang.org/dl/{{ golang_version }}.linux-amd64.tar.gz"
+    src: /tmp/{{ golang_version }}.tar.gz
     dest: /usr/local/
     remote_src: yes
 
