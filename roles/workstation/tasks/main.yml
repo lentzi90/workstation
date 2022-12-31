@@ -103,6 +103,9 @@
 - import_tasks: yq.yml
   tags: ["binaries", "yq"]
 
+- import_tasks: syncthing.yml
+  tags: ["binaries", "syncthing", "extras"]
+
 - name: Install flatpaks
   import_tasks: flatpaks.yml
   tags: ["flatpaks"]

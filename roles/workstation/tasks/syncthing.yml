@@ -1,0 +1,55 @@
+- name: Find latest version of syncthing
+  when: syncthing_version is not defined
+  uri:
+    url: https://api.github.com/repos/syncthing/syncthing/releases/latest
+    return_content: yes
+  register: latest_release
+
+- name: Set syncthing version
+  when: syncthing_version is not defined
+  set_fact:
+    syncthing_version: "{{ (latest_release.content | from_json).tag_name }}"
+
+- name: Check current syncthing version
+  command: syncthing --version
+  register: syncthing_output
+  ignore_errors: yes
+  changed_when: False
+
+- name: Set current syncthing version
+  when: syncthing_output is succeeded
+  set_fact:
+    current_syncthing_version: "{{ syncthing_output.stdout_lines[0] | regex_search('v([0-9]+\\.){2}[0-9]+') }}"
+
+- name: Download syncthing
+  when: current_syncthing_version | default('none') != syncthing_version
+  get_url:
+    url: https://github.com/syncthing/syncthing/releases/download/{{ syncthing_version }}/syncthing-linux-amd64-{{ syncthing_version }}.tar.gz
+    dest: /tmp/syncthing.tar.gz
+
+- name: Extract and install syncthing
+  when: current_syncthing_version | default('none') != syncthing_version
+  become: yes
+  unarchive:
+    src: /tmp/syncthing.tar.gz
+    dest: /usr/local/bin/syncthing
+    include:
+      - syncthing
+    remote_src: yes
+
+- name: Ensure user systemd folder
+  file:
+    path: /home/{{ ansible_user_id }}/.config/systemd/user
+    state: directory
+
+- name: Add systemd unit for syncthing
+  copy:
+    src: syncthing.service
+    dest: /home/{{ ansible_user_id }}/.config/systemd/user/syncthing.service
+
+- name: Enable syncthing service
+  systemd:
+    name: syncthing
+    state: started
+    enabled: yes
+    scope: user
