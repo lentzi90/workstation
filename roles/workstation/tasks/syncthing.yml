@@ -32,10 +32,13 @@
   become: yes
   unarchive:
     src: /tmp/syncthing.tar.gz
-    dest: /usr/local/bin/syncthing
-    include:
-      - syncthing
+    dest: /usr/local/bin/
     remote_src: yes
+    extra_opts:
+      # Skip the folder
+      - --strip=1
+      # The specific file(s) to extract
+      - syncthing-linux-amd64-{{ syncthing_version }}/syncthing
 
 - name: Ensure user systemd folder
   file:
