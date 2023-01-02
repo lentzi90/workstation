@@ -104,6 +104,7 @@
   tags: ["binaries", "yq"]
 
 - import_tasks: syncthing.yml
+  when: install_extras | default(false) | bool == true
   tags: ["binaries", "syncthing", "extras"]
 
 - name: Install flatpaks
