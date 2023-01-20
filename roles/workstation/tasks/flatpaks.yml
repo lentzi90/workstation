@@ -9,7 +9,8 @@
   community.general.flatpak:
     name:
       - com.bitwarden.desktop
-      - io.atom.Atom
+      - org.mozilla.firefox
+      - com.visualstudio.code
       - org.gnome.gitg
       - org.gnome.meld
       - org.gnome.DejaDup
