@@ -1,28 +1,23 @@
 # README
 
-Fedora:
+**Fedora Silverblue**
+
+No extra steps needed.
+
+**Ubuntu:**
 
 ```bash
-sudo dnf install git ansible
-```
-
-Fedora Silverblue
-
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install ansible jmespath
-```
-
-Ubuntu:
-
-```bash
-sudo apt install git ansible
+sudo apt install git python3.10-venv
 ```
 
 Common:
 
 ```bash
+
+python -m venv .venv
+source .venv/bin/activate
+pip install ansible jmespath
+
 ansible-galaxy collection install community.general
 git clone https://github.com/lentzi90/workstation.git
 cd workstation
@@ -49,6 +44,7 @@ This will generate the file `versions.yaml` with version numbers that can be use
 ```bash
 git config --global user.email <email>
 git config --global user.signingKey <key>
+git config --global commit.gpgsign true
 ```
 
 ## Setup passwordless login and sudo using pam-u2f
