@@ -11,6 +11,7 @@
       - com.bitwarden.desktop
       - org.mozilla.firefox
       - com.visualstudio.code
+      - com.github.tchx84.Flatseal
       - org.gnome.gitg
       - org.gnome.meld
       - org.gnome.DejaDup
@@ -21,3 +22,10 @@
       - com.getpostman.Postman
       - org.telegram.desktop
       - org.libreoffice.LibreOffice
+      - org.freedesktop.Sdk.Extension.golang/x86_64/22.08
+
+- name: Configure VS Code
+  command: "{{ item }}"
+  loop:
+    - flatpak override --user --filesystem=/run/docker.sock com.visualstudio.code
+    - flatpak override --user --env=FLATPAK_ENABLE_SDK_EXT=golang com.visualstudio.code
