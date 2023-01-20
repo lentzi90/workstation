@@ -26,6 +26,10 @@
       - bridge-utils
       - libpam-u2f
 
+- import_tasks: docker.yml
+  when: ansible_distribution == 'Ubuntu'
+  tags: ["docker"]
+
 - name: Install packages for silverblue
   become: yes
   when: ansible_pkg_mgr == 'atomic_container'
