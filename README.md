@@ -47,6 +47,15 @@ git config --global user.signingKey <key>
 git config --global commit.gpgsign true
 ```
 
+## Configure VS Code flatpak access to docker
+
+The playbook already configures access to the docker socket, but the docker executable is not in the PATH.
+Go to *File > Preferences > Settings > Extensions Dev Containers* and set the Docker Path to
+
+```
+/run/host/usr/bin/docker
+```
+
 ## Setup passwordless login and sudo using pam-u2f
 
 The playbooks will install the necessary packages, but not enable this by default due to the sensitivity of it.
