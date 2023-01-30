@@ -2,7 +2,7 @@
 - name: Find latest version of tilt
   uri:
     url: https://api.github.com/repos/tilt-dev/tilt/releases/latest
-    return_content: yes
+    return_content: true
   register: latest_release
 
 - name: Set tilt version
@@ -13,7 +13,7 @@
 - name: Check current tilt version
   command: tilt version
   register: tilt_output
-  ignore_errors: yes
+  ignore_errors: true
   changed_when: False
 
 - name: Set current tilt version
@@ -23,8 +23,8 @@
 
 - name: Download, extract and install tilt
   when: current_tilt_version | default('none') != tilt_version
-  become: yes
+  become: true
   unarchive:
     src: "https://github.com/tilt-dev/tilt/releases/download/{{ tilt_version }}/tilt.{{ tilt_version | replace('v', '') }}.linux.x86_64.tar.gz"
     dest: /usr/local/bin/
-    remote_src: yes
+    remote_src: true

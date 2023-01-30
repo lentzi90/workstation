@@ -1,5 +1,5 @@
 - name: Install base packages
-  become: yes
+  become: true
   when: ansible_distribution == 'Fedora' and ansible_pkg_mgr != 'atomic_container'
   dnf:
     name:
@@ -19,7 +19,7 @@
       - byobu
 
 - name: Install base packages
-  become: yes
+  become: true
   when: ansible_distribution == 'Ubuntu'
   package:
     name:
@@ -41,7 +41,7 @@
       - libpcsclite-dev
 
 - name: Install base packages
-  become: yes
+  become: true
   # Silverblue
   when: ansible_pkg_mgr == 'atomic_container'
   community.general.rpm_ostree_pkg:

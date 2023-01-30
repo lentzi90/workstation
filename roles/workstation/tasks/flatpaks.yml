@@ -1,9 +1,9 @@
 - name: Add flathub repo if needed
-  become: yes
+  become: true
   community.general.flatpak_remote:
     name: flathub
     flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
-  ignore_errors: yes
+  ignore_errors: true
 
 - name: Install flatpaks
   community.general.flatpak:

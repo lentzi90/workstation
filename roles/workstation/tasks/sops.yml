@@ -3,7 +3,7 @@
   when: sops_version is not defined
   uri:
     url: https://api.github.com/repos/mozilla/sops/releases/latest
-    return_content: yes
+    return_content: true
   register: latest_release
 
 - name: Get sops latest tag name
@@ -14,7 +14,7 @@
 - name: Check current sops version
   command: sops --version
   register: sops_output
-  ignore_errors: yes
+  ignore_errors: true
   changed_when: False
 
 - name: Set current sops version
@@ -25,9 +25,9 @@
 
 - name: Download and install sops
   when: current_sops_version | default('none') != sops_version
-  become: yes
+  become: true
   get_url:
     url: "https://github.com/mozilla/sops/releases/download/{{ sops_version }}/sops-{{ sops_version }}.linux"
     dest: /usr/local/bin/sops
     mode: "u=xrw,g=xr,o=x"
-    force: yes
+    force: true

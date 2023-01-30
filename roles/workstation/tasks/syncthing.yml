@@ -2,7 +2,7 @@
   when: syncthing_version is not defined
   uri:
     url: https://api.github.com/repos/syncthing/syncthing/releases/latest
-    return_content: yes
+    return_content: true
   register: latest_release
 
 - name: Set syncthing version
@@ -13,7 +13,7 @@
 - name: Check current syncthing version
   command: syncthing --version
   register: syncthing_output
-  ignore_errors: yes
+  ignore_errors: true
   changed_when: False
 
 - name: Set current syncthing version
@@ -29,11 +29,11 @@
 
 - name: Extract and install syncthing
   when: current_syncthing_version | default('none') != syncthing_version
-  become: yes
+  become: true
   unarchive:
     src: /tmp/syncthing.tar.gz
     dest: /usr/local/bin/
-    remote_src: yes
+    remote_src: true
     extra_opts:
       # Skip the folder
       - --strip=1
@@ -54,5 +54,5 @@
   systemd:
     name: syncthing
     state: started
-    enabled: yes
+    enabled: true
     scope: user

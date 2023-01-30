@@ -2,7 +2,7 @@
 - name: Find latest version of starship
   uri:
     url: https://api.github.com/repos/starship/starship/releases/latest
-    return_content: yes
+    return_content: true
   register: latest_release
 
 - name: Set starship version
@@ -13,7 +13,7 @@
 - name: Check current starship version
   command: starship --version
   register: starship_output
-  ignore_errors: yes
+  ignore_errors: true
   changed_when: False
 
 - name: Set current starship version
@@ -24,11 +24,11 @@
 
 - name: Download, extract and install starship
   when: current_starship_version | default('none') != starship_version
-  become: yes
+  become: true
   unarchive:
     src: "https://github.com/starship/starship/releases/download/{{ starship_version }}/starship-x86_64-unknown-linux-gnu.tar.gz"
     dest: /usr/local/bin/
-    remote_src: yes
+    remote_src: true
 
 - name: Add starship to bash_profile
   blockinfile:

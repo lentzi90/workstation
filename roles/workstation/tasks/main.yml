@@ -1,5 +1,5 @@
 - name: Install workstation packages
-  become: yes
+  become: true
   when: ansible_distribution == 'Fedora' and ansible_pkg_mgr != 'atomic_container'
   dnf:
     name:
@@ -11,7 +11,7 @@
       - https://prerelease.keybase.io/keybase_amd64.rpm
 
 - name: Install workstation packages
-  become: yes
+  become: true
   when: ansible_distribution == 'Ubuntu'
   package:
     name:
@@ -31,7 +31,7 @@
   tags: ["docker"]
 
 - name: Install packages for silverblue
-  become: yes
+  become: true
   when: ansible_pkg_mgr == 'atomic_container'
   community.general.rpm_ostree_pkg:
     name:
@@ -50,11 +50,11 @@
   tags: ["pre-commit"]
 
 - import_tasks: chrome_fedora.yml
-  become: yes
+  become: true
   when: ansible_distribution == 'Fedora' and ansible_pkg_mgr != 'atomic_container'
   tags: ["chrome"]
 - import_tasks: chrome_ubuntu.yml
-  become: yes
+  become: true
   when: ansible_distribution == 'Ubuntu'
   tags: ["chrome"]
 

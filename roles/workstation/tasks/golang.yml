@@ -12,7 +12,7 @@
 - name: Check current golang version
   command: go version
   register: go_output
-  ignore_errors: yes
+  ignore_errors: true
   changed_when: False
 
 - name: Set current golang version
@@ -22,7 +22,7 @@
 
 - name: Remove old golang installation
   when: current_golang_version | default('none') != golang_version
-  become: yes
+  become: true
   ansible.builtin.file:
     path: /usr/local/go
     state: absent
@@ -35,14 +35,14 @@
 
 - name: Extract and install golang
   when: current_golang_version | default('none') != golang_version
-  become: yes
+  become: true
   unarchive:
     src: /tmp/{{ golang_version }}.tar.gz
     dest: /usr/local/
-    remote_src: yes
+    remote_src: true
 
 - name: Add go to path
-  become: no
+  become: false
   blockinfile:
     content: |
       # Golang

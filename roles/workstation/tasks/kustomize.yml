@@ -5,7 +5,7 @@
 - name: Find latest versions of kustomize
   uri:
     url: https://api.github.com/repos/kubernetes-sigs/kustomize/releases
-    return_content: yes
+    return_content: true
   register: releases
 
 - name: Set kustomize version
@@ -19,7 +19,7 @@
 - name: Check current kustomize version
   command: kustomize version
   register: kustomize_output
-  ignore_errors: yes
+  ignore_errors: true
   changed_when: False
 
 - name: Set current kustomize version
@@ -31,8 +31,8 @@
 
 - name: Download, extract and install kustomize
   when: current_kustomize_version | default('none') != kustomize_version
-  become: yes
+  become: true
   unarchive:
     src: "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2F{{ kustomize_version }}/kustomize_{{ kustomize_version }}_linux_amd64.tar.gz"
     dest: /usr/local/bin/
-    remote_src: yes
+    remote_src: true

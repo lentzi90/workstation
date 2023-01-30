@@ -3,7 +3,7 @@
   when: helm_version is not defined
   uri:
     url: https://api.github.com/repos/helm/helm/releases/latest
-    return_content: yes
+    return_content: true
   register: latest_release
 
 - name: Set helm version
@@ -14,7 +14,7 @@
 - name: Check current helm version
   command: helm version --template "{{'{{'}}.Version{{'}}'}}"
   register: helm_output
-  ignore_errors: yes
+  ignore_errors: true
   changed_when: False
 
 - name: Set current helm version
@@ -24,11 +24,11 @@
 
 - name: Download helm
   when: current_helm_version | default('none') != helm_version
-  become: yes
+  become: true
   unarchive:
     src: "https://get.helm.sh/helm-{{ helm_version }}-linux-amd64.tar.gz"
     dest: /usr/local/bin/
-    remote_src: yes
+    remote_src: true
     extra_opts:
       # Skip the folder
       - --strip=1
@@ -36,7 +36,7 @@
       - linux-amd64/helm
 
 - name: Make helm executable
-  become: yes
+  become: true
   file:
     path: /usr/local/bin/helm
     mode: "u=xrw,g=xr,o=x"

@@ -2,7 +2,7 @@
 - name: Find latest version of distrobox
   uri:
     url: https://api.github.com/repos/89luca89/distrobox/releases/latest
-    return_content: yes
+    return_content: true
   register: latest_release
 
 - name: Set distrobox version
@@ -13,7 +13,7 @@
 - name: Check current distrobox version
   command: distrobox --version
   register: distrobox_output
-  ignore_errors: yes
+  ignore_errors: true
   changed_when: False
 
 - name: Set current distrobox version
@@ -23,11 +23,11 @@
 
 - name: Download, extract and install distrobox
   when: current_distrobox_version | default('none') != distrobox_version
-  become: yes
+  become: true
   unarchive:
     src: "https://github.com/89luca89/distrobox/archive/refs/tags/{{ distrobox_version }}.tar.gz"
     dest: /usr/local/bin/
-    remote_src: yes
+    remote_src: true
     extra_opts:
       # Skip the folder
       - --strip=1

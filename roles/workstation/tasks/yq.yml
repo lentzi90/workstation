@@ -2,7 +2,7 @@
   when: yq_version is not defined
   uri:
     url: https://api.github.com/repos/mikefarah/yq/releases/latest
-    return_content: yes
+    return_content: true
   register: latest_release
 
 - name: Set yq version
@@ -13,7 +13,7 @@
 - name: Check current yq version
   command: yq --version
   register: yq_output
-  ignore_errors: yes
+  ignore_errors: true
   changed_when: False
 
 - name: Set current yq version
@@ -23,9 +23,9 @@
 
 - name: Download yq
   when: current_yq_version | default('none') != yq_version
-  become: yes
+  become: true
   get_url:
     url: https://github.com/mikefarah/yq/releases/download/{{ yq_version }}/yq_linux_amd64
     dest: /usr/local/bin/yq
     mode: "u=xrw,g=xr,o=x"
-    force: yes
+    force: true

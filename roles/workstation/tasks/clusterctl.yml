@@ -2,7 +2,7 @@
   when: clusterctl_version is not defined
   uri:
     url: https://api.github.com/repos/kubernetes-sigs/cluster-api/releases/latest
-    return_content: yes
+    return_content: true
   register: latest_release
 
 - name: Set clusterctl version
@@ -13,7 +13,7 @@
 - name: Check current clusterctl version
   command: clusterctl version -o short
   register: clusterctl_output
-  ignore_errors: yes
+  ignore_errors: true
   changed_when: False
 
 - name: Set current clusterctl version
@@ -23,9 +23,9 @@
 
 - name: Download clusterctl
   when: current_clusterctl_version | default('none') != clusterctl_version
-  become: yes
+  become: true
   get_url:
     url: https://github.com/kubernetes-sigs/cluster-api/releases/download/{{ clusterctl_version }}/clusterctl-linux-amd64
     dest: /usr/local/bin/clusterctl
     mode: "u=xrw,g=xr,o=x"
-    force: yes
+    force: true

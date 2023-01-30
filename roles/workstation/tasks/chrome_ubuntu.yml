@@ -6,7 +6,7 @@
     repo: "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
     filename: "google-chrome"
     state: present
-    update_cache: yes
+    update_cache: true
 
 - name: "Install Google chrome present"
   apt:

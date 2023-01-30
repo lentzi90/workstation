@@ -2,15 +2,15 @@
 - name: Find latest version of yubikey-touch-detector
   uri:
     url: https://api.github.com/repos/maximbaz/yubikey-touch-detector/releases/latest
-    return_content: yes
+    return_content: true
   register: latest_release
 
 - name: Download, extract and install yubikey-touch-detector
-  become: yes
+  become: true
   unarchive:
     src: "https://github.com/maximbaz/yubikey-touch-detector/releases/download/{{ (latest_release.content | from_json).tag_name }}/yubikey-touch-detector-{{ (latest_release.content | from_json).tag_name }}-linux64.tar.gz"
     dest: /usr/local/bin/
-    remote_src: yes
+    remote_src: true
     extra_opts:
       # Skip the folder
       - --strip=1
@@ -31,5 +31,5 @@
   systemd:
     name: yubikey-touch-detector
     state: started
-    enabled: yes
+    enabled: true
     scope: user

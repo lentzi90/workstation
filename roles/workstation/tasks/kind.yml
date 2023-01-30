@@ -2,7 +2,7 @@
   when: kind_version is not defined
   uri:
     url: https://api.github.com/repos/kubernetes-sigs/kind/releases/latest
-    return_content: yes
+    return_content: true
   register: latest_release
 
 - name: Set kind version
@@ -13,7 +13,7 @@
 - name: Check current kind version
   command: kind version
   register: kind_output
-  ignore_errors: yes
+  ignore_errors: true
   changed_when: False
 
 - name: Set current kind version
@@ -23,9 +23,9 @@
 
 - name: Download kind
   when: current_kind_version | default('none') != kind_version
-  become: yes
+  become: true
   get_url:
     url: https://github.com/kubernetes-sigs/kind/releases/download/{{ kind_version }}/kind-linux-amd64
     dest: /usr/local/bin/kind
     mode: "u=xrw,g=xr,o=x"
-    force: yes
+    force: true

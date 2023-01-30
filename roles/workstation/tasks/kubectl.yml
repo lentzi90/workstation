@@ -3,7 +3,7 @@
   when: kubectl_version is not defined
   uri:
     url: https://storage.googleapis.com/kubernetes-release/release/stable.txt
-    return_content: yes
+    return_content: true
   register: webpage
 
 - name: Set kubectl version
@@ -14,7 +14,7 @@
 - name: Check current kubectl version
   command: kubectl version --client=true -o json
   register: kubectl_output
-  ignore_errors: yes
+  ignore_errors: true
   changed_when: False
 
 - name: Set current kubectl version
@@ -24,14 +24,14 @@
 
 - name: Download kubectl
   when: current_kubectl_version | default('none') != kubectl_version
-  become: yes
+  become: true
   get_url:
     url: "https://storage.googleapis.com/kubernetes-release/release/{{ kubectl_version }}/bin/linux/amd64/kubectl"
     dest: /usr/local/bin/kubectl
-    force: yes
+    force: true
 
 - name: Make kubectl executable
-  become: yes
+  become: true
   file:
     path: /usr/local/bin/kubectl
     mode: "u=xrw,g=xr,o=x"
