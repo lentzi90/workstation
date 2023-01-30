@@ -29,3 +29,16 @@
     dest: /usr/local/bin/kind
     mode: "u=xrw,g=xr,o=x"
     force: true
+
+# When working with kind and larger clusters with many containers, it is easy to run into
+# "too many open files" issues. Increase the limits a bit to avoid this.
+- name: Increase inotify watch limits
+  become: true
+  ansible.posix.sysctl:
+    name: fs.inotify.max_user_watches
+    value: "1048576"
+- name: Increase inotify instance limits
+  become: true
+  ansible.posix.sysctl:
+    name: fs.inotify.max_user_instances
+    value: "8192"
