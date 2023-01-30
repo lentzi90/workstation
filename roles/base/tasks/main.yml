@@ -49,6 +49,14 @@
       - byobu
       - arm-image-installer
 
+- name: Set default editor to vim
+  blockinfile:
+    content: |
+      export EDITOR="/usr/bin/vim"
+    path: /home/{{ ansible_user_id }}/.bashrc
+    marker: "# {mark} ANSIBLE MANAGED BLOCK EDITOR"
+  tags: ["editor"]
+
 - name: Copy public PGP key
   copy:
     src: PGP-public-key.txt
