@@ -49,10 +49,17 @@
       - byobu
       - arm-image-installer
 
+- name: Check available editor
+  file:
+    path: /usr/bin/vim
+  register: vim_file
+  failed_when: false
+  tags: ["editor"]
+
 - name: Set default editor to vim
   blockinfile:
     content: |
-      export EDITOR="/usr/bin/vim"
+      export EDITOR="/usr/bin/{{ 'vim' if vim_file.state == 'file' else 'vi' }}"
     path: /home/{{ ansible_user_id }}/.bashrc
     marker: "# {mark} ANSIBLE MANAGED BLOCK EDITOR"
   tags: ["editor"]

@@ -21,7 +21,7 @@ pip install ansible jmespath
 ansible-galaxy collection install community.general
 git clone https://github.com/lentzi90/workstation.git
 cd workstation
-ansible-playbook -i inventory.ini setup.yml -K
+ansible-playbook setup.yml -K
 ```
 
 ## Install extras
@@ -34,7 +34,7 @@ To install everything, add `-e install_extras=true`.
 Check what the latest versions of some binaries are:
 
 ```bash
-ansible-playbook -i inventory.ini setup.yml --tags=versions
+ansible-playbook setup.yml --tags=versions
 ```
 
 This will generate the file `versions.yaml` with version numbers that can be used to set the versions you want to freeze.
