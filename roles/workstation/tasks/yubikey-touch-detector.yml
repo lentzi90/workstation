@@ -1,21 +1,49 @@
----
 - name: Find latest version of yubikey-touch-detector
   uri:
     url: https://api.github.com/repos/maximbaz/yubikey-touch-detector/releases/latest
     return_content: true
   register: latest_release
 
-- name: Download, extract and install yubikey-touch-detector
+- name: Set ytd version
+  when: ytd_version is not defined
+  set_fact:
+    ytd_version: "{{ (latest_release.content | from_json).tag_name }}"
+
+- name: Check current ytd version
+  command: yubikey-touch-detector -version
+  register: ytd_output
+  ignore_errors: true
+  changed_when: False
+
+- name: Set current ytd version
+  when: ytd_output is succeeded
+  set_fact:
+    current_ytd_version: "{{ ytd_output.stdout_lines[0] | regex_search('([0-9]+\\.){2}[0-9]+') }}"
+
+# - name: Download, extract and install yubikey-touch-detector
+#   become: true
+#   unarchive:
+#     src: "https://github.com/maximbaz/yubikey-touch-detector/releases/download/{{ (latest_release.content | from_json).tag_name }}/yubikey-touch-detector-{{ (latest_release.content | from_json).tag_name }}-linux64.tar.gz"
+#     dest: /usr/local/bin/
+#     remote_src: true
+#     extra_opts:
+#       # Skip the folder
+#       - --strip=1
+#       # The specific file(s) to extract
+#       - yubikey-touch-detector-{{ (latest_release.content | from_json).tag_name }}-linux64/yubikey-touch-detector
+
+- name: Install yubikey-touch-detector
+  when: current_ytd_version | default('none') != ytd_version
+  command: go install github.com/maximbaz/yubikey-touch-detector@{{ (latest_release.content | from_json).tag_name }}
+
+- name: Copy the binary to /usr/local/bin/
+  when: current_ytd_version | default('none') != ytd_version
   become: true
-  unarchive:
-    src: "https://github.com/maximbaz/yubikey-touch-detector/releases/download/{{ (latest_release.content | from_json).tag_name }}/yubikey-touch-detector-{{ (latest_release.content | from_json).tag_name }}-linux64.tar.gz"
-    dest: /usr/local/bin/
+  copy:
+    src: /home/{{ ansible_user_id }}/go/bin/yubikey-touch-detector
+    dest: /usr/local/bin/yubikey-touch-detector
     remote_src: true
-    extra_opts:
-      # Skip the folder
-      - --strip=1
-      # The specific file(s) to extract
-      - yubikey-touch-detector-{{ (latest_release.content | from_json).tag_name }}-linux64/yubikey-touch-detector
+    force: true
 
 - name: Ensure user systemd folder
   file:
