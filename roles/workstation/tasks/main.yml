@@ -3,28 +3,28 @@
   when: ansible_distribution == 'Fedora' and ansible_pkg_mgr != 'atomic_container'
   dnf:
     name:
-      - gnome-terminal-nautilus
-      - jupyter-notebook
-      - VirtualBox
-      - vagrant
-      - libvirt
-      - https://prerelease.keybase.io/keybase_amd64.rpm
+    - gnome-terminal-nautilus
+    - jupyter-notebook
+    - VirtualBox
+    - vagrant
+    - libvirt
+    - https://prerelease.keybase.io/keybase_amd64.rpm
 
 - name: Install workstation packages
   become: true
   when: ansible_distribution == 'Ubuntu'
   package:
     name:
-      - flatpak
-      - nautilus-extension-gnome-terminal
-      - jupyter-notebook
-      - virtualbox
-      - vagrant
-      - qemu-kvm
-      - libvirt-daemon-system
-      - libvirt-clients
-      - bridge-utils
-      - libpam-u2f
+    - flatpak
+    - nautilus-extension-gnome-terminal
+    - jupyter-notebook
+    - virtualbox
+    - vagrant
+    - qemu-kvm
+    - libvirt-daemon-system
+    - libvirt-clients
+    - bridge-utils
+    - libpam-u2f
 
 - import_tasks: docker.yml
   when: ansible_distribution == 'Ubuntu'
@@ -35,12 +35,12 @@
   when: ansible_pkg_mgr == 'atomic_container'
   community.general.rpm_ostree_pkg:
     name:
-      - arm-image-installer
-      - virt-manager
-      - libvirt
-      - gnome-boxes
-      - pam-u2f
-      - pamu2fcfg
+    - arm-image-installer
+    - virt-manager
+    - libvirt
+    - gnome-boxes
+    - pam-u2f
+    - pamu2fcfg
 
 - import_tasks: golang.yml
   tags: ["golang"]
@@ -65,6 +65,9 @@
 - name: Install kustomize
   import_tasks: kustomize.yml
   tags: ["binaries", "kustomize"]
+
+- import_tasks: kubebuilder.yml
+  tags: ["binaries", "kubebuilder"]
 
 - name: Install SopsSecretGenerator
   import_tasks: sopssecretgenerator.yml

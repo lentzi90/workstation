@@ -1,0 +1,31 @@
+- name: Find latest version of kubebuilder
+  when: kubebuilder_version is not defined
+  uri:
+    url: https://api.github.com/repos/kubernetes-sigs/kubebuilder/releases/latest
+    return_content: true
+  register: latest_release
+
+- name: Set kubebuilder version
+  when: kubebuilder_version is not defined
+  set_fact:
+    kubebuilder_version: "{{ (latest_release.content | from_json).tag_name }}"
+
+- name: Check current kubebuilder version
+  command: kubebuilder version
+  register: kubebuilder_output
+  ignore_errors: true
+  changed_when: False
+
+- name: Set current kubebuilder version
+  when: kubebuilder_output is succeeded
+  set_fact:
+    current_kubebuilder_version: "{{ kubebuilder_output.stdout_lines[0] | regex_search('([0-9]+\\.){2}[0-9]+') }}"
+
+- name: Download kubebuilder
+  when: current_kubebuilder_version | default('none') != kubebuilder_version
+  become: true
+  get_url:
+    url: https://github.com/kubernetes-sigs/kubebuilder/releases/download/{{ kubebuilder_version }}/kubebuilder_linux_amd64
+    dest: /usr/local/bin/kubebuilder
+    mode: "u=xrw,g=xr,o=x"
+    force: true
