@@ -1,0 +1,32 @@
+- name: Find latest version of cmctl
+  uri:
+    url: https://api.github.com/repos/cert-manager/cert-manager/releases/latest
+    return_content: true
+  register: latest_release
+
+- name: Set cmctl version
+  when: cmctl_version is not defined
+  set_fact:
+    cmctl_version: "{{ (latest_release.content | from_json).tag_name }}"
+
+- name: Check current cmctl version
+  command: cmctl version --client --short
+  register: cmctl_output
+  ignore_errors: true
+  changed_when: False
+
+- name: Set current cmctl version
+  when: cmctl_output is succeeded
+  set_fact:
+    current_cmctl_version: "{{ cmctl_output.stdout_lines[0] | regex_search('v([0-9]+\\.){2}[0-9]+') }}"
+
+- name: Download, extract and install cmctl
+  when: current_cmctl_version | default('none') != cmctl_version
+  become: true
+  unarchive:
+    src: "https://github.com/cert-manager/cert-manager/releases/download/{{ cmctl_version }}/cmctl-linux-amd64.tar.gz"
+    dest: /usr/local/bin/
+    remote_src: true
+    extra_opts:
+    # The specific file(s) to extract
+    - cmctl

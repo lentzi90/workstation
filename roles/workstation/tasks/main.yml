@@ -66,6 +66,10 @@
   import_tasks: kustomize.yml
   tags: ["binaries", "kustomize"]
 
+- name: Install cmctl
+  import_tasks: cmctl.yml
+  tags: ["binaries", "cmctl"]
+
 - import_tasks: kubebuilder.yml
   tags: ["binaries", "kubebuilder"]
 
