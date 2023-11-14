@@ -46,6 +46,6 @@
   blockinfile:
     content: |
       # Golang
-      export PATH=$PATH:/usr/local/go/bin:/home/{{ ansible_user_id }}/go/bin
+      export PATH="${PATH}:/usr/local/go/bin:${HOME}/go/bin/"
     path: /home/{{ ansible_user_id }}/.bashrc
     marker: "# {mark} ANSIBLE MANAGED BLOCK GOLANG"
