@@ -101,20 +101,24 @@
   import_tasks: sops.yml
   tags: ["binaries", "sops"]
 
-- import_tasks: distrobox.yml
+- name: Install distrobox
+  import_tasks: distrobox.yml
   tags: ["binaries", "distrobox"]
 
 - name: Install tilt
   import_tasks: tilt.yml
   tags: ["binaries", "tilt"]
 
-- import_tasks: yubikey-touch-detector.yml
+- name: Install yubikey touch detector
+  import_tasks: yubikey-touch-detector.yml
   tags: ["binaries", "yubikey-touch-detector"]
 
-- import_tasks: yq.yml
+- name: Install yq
+  import_tasks: yq.yml
   tags: ["binaries", "yq"]
 
-- import_tasks: syncthing.yml
+- name: Install syncthing
+  import_tasks: syncthing.yml
   when: install_extras | default(false) | bool == true
   tags: ["binaries", "syncthing", "extras"]
 
