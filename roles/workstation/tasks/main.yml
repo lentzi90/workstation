@@ -117,6 +117,10 @@
   import_tasks: yq.yml
   tags: ["binaries", "yq"]
 
+- name: Install gh
+  import_tasks: github_cli.yml
+  tags: ["binaries", "gh"]
+
 - name: Install syncthing
   import_tasks: syncthing.yml
   when: install_extras | default(false) | bool == true
