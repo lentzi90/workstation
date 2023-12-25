@@ -70,6 +70,10 @@
   import_tasks: kustomize.yml
   tags: ["binaries", "kustomize"]
 
+- name: Install argocd
+  import_tasks: argocd.yml
+  tags: ["binaries", "argocd"]
+
 - name: Install cmctl
   import_tasks: cmctl.yml
   tags: ["binaries", "cmctl"]
