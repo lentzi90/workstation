@@ -42,6 +42,10 @@
     - pam-u2f
     - pamu2fcfg
 
+- name: Configure host for rootless kind
+  import_tasks: rootless-kind.yml
+  tags: ["kind", "rootless"]
+
 - import_tasks: golang.yml
   tags: ["golang"]
 
