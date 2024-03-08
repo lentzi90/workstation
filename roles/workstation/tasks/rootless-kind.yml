@@ -1,18 +1,22 @@
 - name: Ensure user@.service.d systemd folder
+  become: true
   file:
     path: /etc/systemd/system/user@.service.d
     state: directory
 
 - name: Delegate CPU controller
+  become: true
   copy:
     src: delegate.conf
     dest: /etc/systemd/system/user@.service.d/delegate.conf
 
 - name: Ensure iptables kernel modules are loaded
+  become: true
   copy:
     src: iptables.conf
     dest: /etc/modules-load.d/iptables.conf
 
 - name: Daemon reload
+  become: true
   systemd:
     daemon_reload: true
