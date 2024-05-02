@@ -25,7 +25,7 @@
   when: current_minikube_version | default('none') != minikube_version
   become: true
   get_url:
-    url: https://github.com/kubernetes/minikube/releases/download/{{ minikube_version }}/minikube-linux-amd64
+    url: https://github.com/kubernetes/minikube/releases/download/{{ minikube_version }}/minikube-linux-{{ arch }}
     dest: /usr/local/bin/minikube
     mode: "u=xrw,g=xr,o=x"
     force: true

@@ -25,7 +25,7 @@
   when: current_kind_version | default('none') != kind_version
   become: true
   get_url:
-    url: https://github.com/kubernetes-sigs/kind/releases/download/{{ kind_version }}/kind-linux-amd64
+    url: https://github.com/kubernetes-sigs/kind/releases/download/{{ kind_version }}/kind-linux-{{ arch }}
     dest: /usr/local/bin/kind
     mode: "u=xrw,g=xr,o=x"
     force: true

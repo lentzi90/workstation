@@ -3,42 +3,42 @@
   when: ansible_distribution == 'Fedora' and ansible_pkg_mgr != 'atomic_container'
   dnf:
     name:
-      - python3-libselinux
-      - git
-      - htop
-      - screenfetch
-      - unzip
-      - vim-enhanced
-      - hunspell-sv
-      - langpacks-sv
-      - langpacks-en
-      - logrotate
-      - nfs-utils
-      - wget
-      - tar
-      - byobu
+    - python3-libselinux
+    - git
+    - htop
+    - screenfetch
+    - unzip
+    - vim-enhanced
+    - hunspell-sv
+    - langpacks-sv
+    - langpacks-en
+    - logrotate
+    - nfs-utils
+    - wget
+    - tar
+    - byobu
 
 - name: Install base packages
   become: true
-  when: ansible_distribution == 'Ubuntu'
+  when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
   package:
     name:
-      - git
-      - htop
-      - screenfetch
-      - unzip
-      - vim
-      - hunspell-sv
-      - logrotate
-      - nfs-common
-      - wget
-      - tar
-      - byobu
-      - scdaemon
-      - pcscd
-      - libssl-dev
-      - swig
-      - libpcsclite-dev
+    - git
+    - htop
+    - screenfetch
+    - unzip
+    - vim
+    - hunspell-sv
+    - logrotate
+    - nfs-common
+    - wget
+    - tar
+    - byobu
+    - scdaemon
+    - pcscd
+    - libssl-dev
+    - swig
+    - libpcsclite-dev
 
 - name: Install base packages
   become: true
@@ -46,8 +46,8 @@
   when: ansible_pkg_mgr == 'atomic_container'
   community.general.rpm_ostree_pkg:
     name:
-      - byobu
-      - arm-image-installer
+    - byobu
+    - arm-image-installer
 
 - name: Check available editor
   file:

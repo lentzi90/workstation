@@ -1,4 +1,3 @@
----
 - name: Find latest version of kubectl
   when: kubectl_version is not defined
   uri:
@@ -26,7 +25,7 @@
   when: current_kubectl_version | default('none') != kubectl_version
   become: true
   get_url:
-    url: "https://storage.googleapis.com/kubernetes-release/release/{{ kubectl_version }}/bin/linux/amd64/kubectl"
+    url: "https://storage.googleapis.com/kubernetes-release/release/{{ kubectl_version }}/bin/linux/{{ arch }}/kubectl"
     dest: /usr/local/bin/kubectl
     force: true
 

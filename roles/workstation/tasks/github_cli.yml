@@ -24,11 +24,11 @@
   when: current_gh_version | default('none') != gh_version
   become: true
   unarchive:
-    src: "https://github.com/cli/cli/releases/download/v{{ gh_version }}/gh_{{ gh_version }}_linux_amd64.tar.gz"
+    src: "https://github.com/cli/cli/releases/download/v{{ gh_version }}/gh_{{ gh_version }}_linux_{{ arch }}.tar.gz"
     dest: /usr/local/bin/
     remote_src: true
     extra_opts:
     # Skip the folder
     - --strip=2
     # The specific file(s) to extract
-    - gh_{{ gh_version }}_linux_amd64/bin/gh
+    - gh_{{ gh_version }}_linux_{{ arch }}/bin/gh

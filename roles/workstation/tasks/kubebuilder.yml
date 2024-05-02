@@ -25,7 +25,7 @@
   when: current_kubebuilder_version | default('none') != kubebuilder_version
   become: true
   get_url:
-    url: https://github.com/kubernetes-sigs/kubebuilder/releases/download/{{ kubebuilder_version }}/kubebuilder_linux_amd64
+    url: https://github.com/kubernetes-sigs/kubebuilder/releases/download/{{ kubebuilder_version }}/kubebuilder_linux_{{ arch }}
     dest: /usr/local/bin/kubebuilder
     mode: "u=xrw,g=xr,o=x"
     force: true

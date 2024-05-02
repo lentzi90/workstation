@@ -1,4 +1,3 @@
----
 - name: Find golang tags
   when: golang_version is not defined
   ansible.builtin.command: git ls-remote --sort="-version:refname" --tags https://github.com/golang/go.git
@@ -30,7 +29,7 @@
 - name: Download golang
   when: current_golang_version | default('none') != golang_version
   get_url:
-    url: "https://golang.org/dl/{{ golang_version }}.linux-amd64.tar.gz"
+    url: "https://golang.org/dl/{{ golang_version }}.linux-{{ arch }}.tar.gz"
     dest: /tmp/{{ golang_version }}.tar.gz
 
 - name: Extract and install golang

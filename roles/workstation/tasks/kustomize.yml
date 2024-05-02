@@ -1,7 +1,6 @@
----
-  # Note that kustomize has multiple components and it is not guaranteed that
-  # the `kustomize` binary will be the latest release. Therefore we need
-  # to check them all and find the latest that starts with "kustomize"
+# Note that kustomize has multiple components and it is not guaranteed that
+# the `kustomize` binary will be the latest release. Therefore we need
+# to check them all and find the latest that starts with "kustomize"
 - name: Find latest versions of kustomize
   uri:
     url: https://api.github.com/repos/kubernetes-sigs/kustomize/releases
@@ -25,7 +24,7 @@
 - name: Set current kustomize version
   when: kustomize_output is succeeded
   set_fact:
-    # Find the current kustomize version. Output if of the form
+    # Find the current kustomize version. Output is of the form
     # {Version:kustomize/v4.0.5 GitCommit:9e8e7a7fe99ec9fbf801463e8607928322fc5245 BuildDate:2021-03-08T20:53:03Z GoOs:linux GoArch:amd64}
     current_kustomize_version: "{{ kustomize_output.stdout_lines[0] | regex_search('v([0-9]+\\.){2}[0-9]+') }}"
 
@@ -33,6 +32,6 @@
   when: current_kustomize_version | default('none') != kustomize_version
   become: true
   unarchive:
-    src: "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2F{{ kustomize_version }}/kustomize_{{ kustomize_version }}_linux_amd64.tar.gz"
+    src: "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2F{{ kustomize_version }}/kustomize_{{ kustomize_version }}_linux_{{ arch }}.tar.gz"
     dest: /usr/local/bin/
     remote_src: true

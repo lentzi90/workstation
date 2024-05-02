@@ -1,4 +1,3 @@
----
 - name: Find latest version of helm
   when: helm_version is not defined
   uri:
@@ -26,14 +25,14 @@
   when: current_helm_version | default('none') != helm_version
   become: true
   unarchive:
-    src: "https://get.helm.sh/helm-{{ helm_version }}-linux-amd64.tar.gz"
+    src: "https://get.helm.sh/helm-{{ helm_version }}-linux-{{ arch }}.tar.gz"
     dest: /usr/local/bin/
     remote_src: true
     extra_opts:
-      # Skip the folder
-      - --strip=1
-      # The specific file(s) to extract
-      - linux-amd64/helm
+    # Skip the folder
+    - --strip=1
+    # The specific file(s) to extract
+    - linux-{{ arch }}/helm
 
 - name: Make helm executable
   become: true

@@ -25,7 +25,7 @@
   when: current_clusterctl_version | default('none') != clusterctl_version
   become: true
   get_url:
-    url: https://github.com/kubernetes-sigs/cluster-api/releases/download/{{ clusterctl_version }}/clusterctl-linux-amd64
+    url: https://github.com/kubernetes-sigs/cluster-api/releases/download/{{ clusterctl_version }}/clusterctl-linux-{{ arch }}
     dest: /usr/local/bin/clusterctl
     mode: "u=xrw,g=xr,o=x"
     force: true

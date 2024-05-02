@@ -24,7 +24,7 @@
 - name: Download syncthing
   when: current_syncthing_version | default('none') != syncthing_version
   get_url:
-    url: https://github.com/syncthing/syncthing/releases/download/{{ syncthing_version }}/syncthing-linux-amd64-{{ syncthing_version }}.tar.gz
+    url: https://github.com/syncthing/syncthing/releases/download/{{ syncthing_version }}/syncthing-linux-{{ arch }}-{{ syncthing_version }}.tar.gz
     dest: /tmp/syncthing.tar.gz
 
 - name: Extract and install syncthing
@@ -35,10 +35,10 @@
     dest: /usr/local/bin/
     remote_src: true
     extra_opts:
-      # Skip the folder
-      - --strip=1
-      # The specific file(s) to extract
-      - syncthing-linux-amd64-{{ syncthing_version }}/syncthing
+    # Skip the folder
+    - --strip=1
+    # The specific file(s) to extract
+    - syncthing-linux-{{ arch }}-{{ syncthing_version }}/syncthing
 
 - name: Ensure user systemd folder
   file:

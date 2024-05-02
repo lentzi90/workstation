@@ -1,4 +1,7 @@
----
+- name: Set tilt_arch
+  ansible.builtin.set_fact:
+    tilt_arch: "{{ 'arm64' if ansible_architecture == 'aarch64' else 'x86_64' if ansible_architecture == 'x86_64' else ansible_architecture }}"
+
 - name: Find latest version of tilt
   uri:
     url: https://api.github.com/repos/tilt-dev/tilt/releases/latest
@@ -25,6 +28,6 @@
   when: current_tilt_version | default('none') != tilt_version
   become: true
   unarchive:
-    src: "https://github.com/tilt-dev/tilt/releases/download/{{ tilt_version }}/tilt.{{ tilt_version | replace('v', '') }}.linux.x86_64.tar.gz"
+    src: "https://github.com/tilt-dev/tilt/releases/download/{{ tilt_version }}/tilt.{{ tilt_version | replace('v', '') }}.linux.{{ tilt_arch }}.tar.gz"
     dest: /usr/local/bin/
     remote_src: true

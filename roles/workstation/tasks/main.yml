@@ -27,7 +27,7 @@
     - libpam-u2f
 
 - import_tasks: docker.yml
-  when: ansible_distribution == 'Ubuntu'
+  when: (ansible_distribution == 'Ubuntu') or (ansible_distribution == 'Debian')
   tags: ["docker"]
 
 - name: Install packages for silverblue
