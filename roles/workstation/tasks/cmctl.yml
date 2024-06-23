@@ -1,6 +1,6 @@
 - name: Find latest version of cmctl
   uri:
-    url: https://api.github.com/repos/cert-manager/cert-manager/releases/latest
+    url: https://api.github.com/repos/cert-manager/cmctl/releases/latest
     return_content: true
   register: latest_release
 
@@ -24,7 +24,7 @@
   when: current_cmctl_version | default('none') != cmctl_version
   become: true
   unarchive:
-    src: "https://github.com/cert-manager/cert-manager/releases/download/{{ cmctl_version }}/cert-manager-cmctl-linux-{{ arch }}.tar.gz"
+    src: https://github.com/cert-manager/cmctl/releases/download/{{ cmctl_version }}/cmctl_linux_{{ arch }}.tar.gz
     dest: /usr/local/bin/
     remote_src: true
     extra_opts:
