@@ -70,6 +70,10 @@
   import_tasks: kustomize.yml
   tags: ["binaries", "kustomize"]
 
+- name: Install k9s
+  import_tasks: k9s.yml
+  tags: ["binaries", "k9s"]
+
 - name: Install argocd
   import_tasks: argocd.yml
   tags: ["binaries", "argocd"]
