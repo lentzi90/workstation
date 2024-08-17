@@ -1,0 +1,47 @@
+- name: Find latest version of krew
+  when: krew_version is not defined
+  uri:
+    url: https://api.github.com/repos/kubernetes-sigs/krew/releases/latest
+    return_content: true
+  register: latest_release
+
+- name: Set krew version
+  when: krew_version is not defined
+  set_fact:
+    krew_version: "{{ (latest_release.content | from_json).tag_name }}"
+
+- name: Check current krew version
+  command: kubectl krew version
+  register: krew_output
+  ignore_errors: true
+  changed_when: False
+
+- name: Set current krew version
+  when: krew_output is succeeded
+  set_fact:
+    current_krew_version: "{{ krew_output.stdout | regex_search('v([0-9]+\\.){2}[0-9]+') }}"
+
+- name: Download and extract krew
+  when: current_krew_version | default('none') != krew_version
+  unarchive:
+    src: "https://github.com/kubernetes-sigs/krew/releases/download/{{ krew_version }}/krew-linux_amd64.tar.gz"
+    dest: /tmp
+    remote_src: true
+    extra_opts:
+      # Skip the folder
+      - --strip=1
+      # The specific file(s) to extract
+      - ./krew-linux_amd64
+
+- name: Install krew
+  when: current_krew_version | default('none') != krew_version
+  ansible.builtin.command: /tmp/krew-linux_amd64 install krew
+
+- name: Add krew bin to path
+  become: false
+  blockinfile:
+    content: |
+      # Krew
+      export PATH="${KREW_ROOT:-${HOME}/.krew}/bin:$PATH"
+    path: "{{ ansible_user_dir }}/.bashrc"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK KREW"

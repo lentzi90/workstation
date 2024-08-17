@@ -85,6 +85,10 @@
 - import_tasks: kubebuilder.yml
   tags: ["binaries", "kubebuilder"]
 
+- name: Install krew
+  import_tasks: krew.yml
+  tags: ["binaries", "krew"]
+
 - name: Install SopsSecretGenerator
   import_tasks: sopssecretgenerator.yml
   tags: ["binaries", "sopssecretgenerator"]
