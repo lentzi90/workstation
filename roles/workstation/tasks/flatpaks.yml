@@ -23,6 +23,8 @@
       - org.telegram.desktop
       - org.libreoffice.LibreOffice
       - org.freedesktop.Sdk.Extension.golang/x86_64/22.08
+      - it.mijorus.gearlever
+      - dev.zed.Zed
 
 - name: Configure VS Code
   command: "{{ item }}"

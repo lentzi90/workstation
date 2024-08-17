@@ -1,0 +1,10 @@
+- name: Create AppImages directory if it does not exist
+  ansible.builtin.file:
+    path: "{{ ansible_user_dir }}/AppImages"
+    state: directory
+
+- name: Install Warp AppImage
+  get_url:
+    url: https://app.warp.dev/download?package=appimage
+    dest: "{{ ansible_user_dir }}/AppImages/warp.appimage"
+    force: false
