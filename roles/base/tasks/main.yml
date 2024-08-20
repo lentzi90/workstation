@@ -3,42 +3,42 @@
   when: ansible_distribution == 'Fedora' and ansible_pkg_mgr != 'atomic_container'
   dnf:
     name:
-    - python3-libselinux
-    - git
-    - htop
-    - screenfetch
-    - unzip
-    - vim-enhanced
-    - hunspell-sv
-    - langpacks-sv
-    - langpacks-en
-    - logrotate
-    - nfs-utils
-    - wget
-    - tar
-    - byobu
+      - python3-libselinux
+      - git
+      - htop
+      - screenfetch
+      - unzip
+      - vim-enhanced
+      - hunspell-sv
+      - langpacks-sv
+      - langpacks-en
+      - logrotate
+      - nfs-utils
+      - wget
+      - tar
+      - byobu
 
 - name: Install base packages
   become: true
   when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
   package:
     name:
-    - git
-    - htop
-    - screenfetch
-    - unzip
-    - vim
-    - hunspell-sv
-    - logrotate
-    - nfs-common
-    - wget
-    - tar
-    - byobu
-    - scdaemon
-    - pcscd
-    - libssl-dev
-    - swig
-    - libpcsclite-dev
+      - git
+      - htop
+      - screenfetch
+      - unzip
+      - vim
+      - hunspell-sv
+      - logrotate
+      - nfs-common
+      - wget
+      - tar
+      - byobu
+      - scdaemon
+      - pcscd
+      - libssl-dev
+      - swig
+      - libpcsclite-dev
 
 - name: Install base packages
   become: true
@@ -46,8 +46,7 @@
   when: ansible_pkg_mgr == 'atomic_container'
   community.general.rpm_ostree_pkg:
     name:
-    - byobu
-    - arm-image-installer
+      - byobu
 
 - name: Check available editor
   file:
@@ -60,17 +59,17 @@
   blockinfile:
     content: |
       export EDITOR="/usr/bin/{{ 'vim' if vim_file.state == 'file' else 'vi' }}"
-    path: /home/{{ ansible_user_id }}/.bashrc
+    path: "{{ ansible_user_dir }}/.bashrc"
     marker: "# {mark} ANSIBLE MANAGED BLOCK EDITOR"
   tags: ["editor"]
 
 - name: Copy public PGP key
   copy:
     src: PGP-public-key.txt
-    dest: /home/{{ ansible_user_id }}/PGP-public-key.txt
+    dest: "{{ ansible_user_dir }}/PGP-public-key.txt"
 
 - name: Import PGP public key
-  command: gpg --import /home/{{ ansible_user_id }}/PGP-public-key.txt
+  command: gpg --import {{ ansible_user_dir }}/PGP-public-key.txt
 
 # TODO: check value first instead of just overwriting every time
 - name: Set name for git

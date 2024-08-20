@@ -8,7 +8,6 @@
       - VirtualBox
       - vagrant
       - libvirt
-      - https://prerelease.keybase.io/keybase_amd64.rpm
 
 - name: Install workstation packages
   become: true
@@ -35,10 +34,7 @@
   when: ansible_pkg_mgr == 'atomic_container'
   community.general.rpm_ostree_pkg:
     name:
-      - arm-image-installer
-      - virt-manager
-      - libvirt
-      - gnome-boxes
+      - byobu
       - pam-u2f
       - pamu2fcfg
 
