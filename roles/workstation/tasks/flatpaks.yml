@@ -25,6 +25,7 @@
       - org.freedesktop.Sdk.Extension.golang/x86_64/22.08
       - it.mijorus.gearlever
       - dev.zed.Zed
+      - com.github.maoschanz.drawing
 
 - name: Configure VS Code
   command: "{{ item }}"
