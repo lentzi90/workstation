@@ -45,6 +45,9 @@
 - import_tasks: golang.yml
   tags: ["golang"]
 
+- import_tasks: rust.yml
+  tags: ["rust"]
+
 - import_tasks: pre-commit.yml
   when: install_extras | default(false) | bool == true
   tags: ["pre-commit"]
