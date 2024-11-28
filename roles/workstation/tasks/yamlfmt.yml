@@ -1,0 +1,32 @@
+- name: Find latest version of yamlfmt
+  uri:
+    url: https://api.github.com/repos/google/yamlfmt/releases/latest
+    return_content: true
+  register: latest_release
+
+- name: Set yamlfmt version
+  when: yamlfmt_version is not defined
+  set_fact:
+    yamlfmt_version: "{{ (latest_release.content | from_json).tag_name }}"
+
+- name: Check current yamlfmt version
+  command: yamlfmt -version
+  register: yamlfmt_output
+  ignore_errors: true
+  changed_when: False
+
+- name: Set current yamlfmt version
+  when: yamlfmt_output is succeeded
+  set_fact:
+    current_yamlfmt_version: "v{{ yamlfmt_output.stdout_lines[0] | regex_search('([0-9]+\\.){2}[0-9]+') }}"
+
+- name: Download, extract and install yamlfmt
+  when: current_yamlfmt_version | default('none') != yamlfmt_version
+  become: true
+  unarchive:
+    src: https://github.com/google/yamlfmt/releases/download/{{ yamlfmt_version }}/yamlfmt_{{ yamlfmt_version[1:] }}_Linux_{{ ansible_architecture }}.tar.gz
+    dest: /usr/local/bin/
+    remote_src: true
+    extra_opts:
+    # The specific file(s) to extract
+    - yamlfmt

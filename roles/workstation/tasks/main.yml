@@ -133,6 +133,10 @@
   import_tasks: yq.yml
   tags: ["binaries", "yq"]
 
+- name: Install yamlfmt
+  import_tasks: yamlfmt.yml
+  tags: ["binaries", "yamlfmt"]
+
 - name: Install gh
   import_tasks: github_cli.yml
   tags: ["binaries", "gh"]
