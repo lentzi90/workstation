@@ -1,0 +1,40 @@
+- name: Find latest version of fzf
+  uri:
+    url: https://api.github.com/repos/junegunn/fzf/releases/latest
+    return_content: true
+  register: latest_release
+
+- name: Set fzf version
+  when: fzf_version is not defined
+  set_fact:
+    fzf_version: "{{ (latest_release.content | from_json).tag_name }}"
+
+- name: Check current fzf version
+  command: fzf --version
+  register: fzf_output
+  ignore_errors: true
+  changed_when: False
+
+- name: Set current fzf version
+  when: fzf_output is succeeded
+  set_fact:
+    current_fzf_version: "v{{ fzf_output.stdout_lines[0] | regex_search('([0-9]+\\.){2}[0-9]+') }}"
+
+- name: Download, extract and install fzf
+  when: current_fzf_version | default('none') != fzf_version
+  become: true
+  unarchive:
+    src: https://github.com/junegunn/fzf/releases/download/{{ fzf_version }}/fzf-{{ fzf_version[1:] }}-linux_{{ arch }}.tar.gz
+    dest: /usr/local/bin/
+    remote_src: true
+    extra_opts:
+    # The specific file(s) to extract
+    - fzf
+
+- name: Add zoxide to bashrc
+  blockinfile:
+    content: |
+      # Set up fzf key bindings and fuzzy completion
+      eval "$(fzf --bash)"
+    path: /home/{{ ansible_user_id }}/.bashrc
+    marker: "# {mark} ANSIBLE MANAGED BLOCK fzf"

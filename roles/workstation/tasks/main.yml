@@ -48,6 +48,10 @@
 - import_tasks: rust.yml
   tags: ["rust"]
 
+- name: Install crates
+  import_tasks: crates.yml
+  tags: ["crates"]
+
 - import_tasks: pre-commit.yml
   when: install_extras | default(false) | bool == true
   tags: ["pre-commit"]
@@ -60,6 +64,10 @@
   become: true
   when: ansible_distribution == 'Ubuntu'
   tags: ["chrome"]
+
+- name: Install fzf
+  import_tasks: fzf.yml
+  tags: ["binaries", "fzf"]
 
 - name: Install kubectl
   import_tasks: kubectl.yml

@@ -1,0 +1,11 @@
+- name: Install zoxide
+  community.general.cargo:
+    name: zoxide
+
+- name: Add zoxide to bashrc
+  blockinfile:
+    content: |
+      eval "$(zoxide init bash)"
+    path: /home/{{ ansible_user_id }}/.bashrc
+    marker: "# {mark} ANSIBLE MANAGED BLOCK zoxide"
+    insertafter: EOF
