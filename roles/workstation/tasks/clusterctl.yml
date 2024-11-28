@@ -29,3 +29,23 @@
     dest: /usr/local/bin/clusterctl
     mode: "u=xrw,g=xr,o=x"
     force: true
+
+- name: Make sure .kube folder exists
+  file:
+    path: /home/{{ ansible_user_id }}/.kube
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+
+- name: Store bash completion for clusterctl
+  shell: clusterctl completion bash > ~/.kube/clusterctl_completion.bash.inc
+
+- name: Add to bash_profile
+  blockinfile:
+    content: |
+      # Clusterctl shell completion
+      source $HOME/.kube/clusterctl_completion.bash.inc
+      alias c=clusterctl
+      complete -F __start_clusterctl c
+    path: /home/{{ ansible_user_id }}/.bashrc
+    marker: "# {mark} ANSIBLE MANAGED BLOCK CLUSTERCTL"
