@@ -1,0 +1,31 @@
+- name: Find latest version of devpod
+  when: devpod_version is not defined
+  uri:
+    url: https://api.github.com/repos/loft-sh/devpod/releases/latest
+    return_content: true
+  register: latest_release
+
+- name: Set devpod version
+  when: devpod_version is not defined
+  set_fact:
+    devpod_version: "{{ (latest_release.content | from_json).tag_name }}"
+
+- name: Check current devpod version
+  command: devpod version
+  register: devpod_output
+  ignore_errors: true
+  changed_when: False
+
+- name: Set current devpod version
+  when: devpod_output is succeeded
+  set_fact:
+    current_devpod_version: "{{ devpod_output.stdout_lines[0] | regex_search('v([0-9]+\\.){2}[0-9]+') }}"
+
+- name: Download devpod
+  when: current_devpod_version | default('none') != devpod_version
+  become: true
+  get_url:
+    url: https://github.com/loft-sh/devpod/releases/download/{{ devpod_version }}/devpod-linux-{{ arch }}
+    dest: /usr/local/bin/devpod
+    mode: "u=xrw,g=xr,o=x"
+    force: true

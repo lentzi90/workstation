@@ -8,3 +8,9 @@
     url: https://app.warp.dev/download?package=appimage
     dest: "{{ ansible_user_dir }}/AppImages/warp.appimage"
     force: false
+
+- name: Install DevPod AppImage
+  get_url:
+    url: https://github.com/loft-sh/devpod/releases/latest/download/DevPod_linux_amd64.AppImage
+    dest: "{{ ansible_user_dir }}/AppImages/devpod.appimage"
+    force: false

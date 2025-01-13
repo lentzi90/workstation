@@ -89,6 +89,9 @@
   import_tasks: cmctl.yml
   tags: ["binaries", "cmctl"]
 
+- import_tasks: devpod.yml
+  tags: ["binaries", "devpod"]
+
 - import_tasks: kubebuilder.yml
   tags: ["binaries", "kubebuilder"]
 
