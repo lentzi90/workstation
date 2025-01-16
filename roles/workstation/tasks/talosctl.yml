@@ -1,0 +1,30 @@
+- name: Find latest version of talosctl
+  uri:
+    url: https://api.github.com/repos/siderolabs/talos/releases/latest
+    return_content: true
+  register: latest_release
+
+- name: Set talosctl version
+  when: talosctl_version is not defined
+  set_fact:
+    talosctl_version: "{{ (latest_release.content | from_json).tag_name }}"
+
+- name: Check current talosctl version
+  command: talosctl version --client --short
+  register: talosctl_output
+  ignore_errors: true
+  changed_when: False
+
+- name: Set current talosctl version
+  when: talosctl_output is succeeded
+  set_fact:
+    current_talosctl_version: "{{ talosctl_output.stdout_lines[1] | regex_search('([0-9]+\\.){2}[0-9]+') }}"
+
+- name: Download and install talosctl
+  when: current_talosctl_version | default('none') != talosctl_version
+  become: true
+  get_url:
+    # https://github.com/siderolabs/talos/releases/download/v1.9.1/talosctl-linux-amd64
+    url: "https://github.com/siderolabs/talos/releases/download/{{ talosctl_version }}/talosctl-linux-{{ arch }}"
+    dest: /usr/local/bin/
+    mode: "u=xrw,g=xr,o=x"

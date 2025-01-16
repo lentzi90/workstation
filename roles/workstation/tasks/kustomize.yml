@@ -2,6 +2,7 @@
 # the `kustomize` binary will be the latest release. Therefore we need
 # to check them all and find the latest that starts with "kustomize"
 - name: Find latest versions of kustomize
+  when: kustomize_version is not defined
   uri:
     url: https://api.github.com/repos/kubernetes-sigs/kustomize/releases
     return_content: true

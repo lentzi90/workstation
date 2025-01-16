@@ -1,0 +1,33 @@
+- name: Find latest version of tpi
+  uri:
+    url: https://api.github.com/repos/turing-machines/tpi/releases/latest
+    return_content: true
+  register: latest_release
+
+- name: Set tpi version
+  when: tpi_version is not defined
+  set_fact:
+    tpi_version: "{{ (latest_release.content | from_json).tag_name }}"
+
+- name: Check current tpi version
+  command: tpi --version
+  register: tpi_output
+  ignore_errors: true
+  changed_when: False
+
+- name: Set current tpi version
+  when: tpi_output is succeeded
+  set_fact:
+    current_tpi_version: "{{ tpi_output.stdout_lines[0] | regex_search('([0-9]+\\.){2}[0-9]+') }}"
+
+- name: Download, extract and install tpi
+  when: current_tpi_version | default('none') != tpi_version
+  become: true
+  unarchive:
+    src: "https://github.com/turing-machines/tpi/releases/download/{{ tpi_version }}/tpi-{{ ansible_architecture }}-unknown-linux-gnu.tar.gz"
+    dest: /usr/local/bin/
+    remote_src: true
+    extra_opts:
+      - --strip-components=3
+      # The specific file(s) to extract
+      - ./usr/bin/tpi

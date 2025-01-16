@@ -85,6 +85,10 @@
   import_tasks: argocd.yml
   tags: ["binaries", "argocd"]
 
+- name: Install bw
+  import_tasks: bw.yml
+  tags: ["binaries", "bw"]
+
 - name: Install cmctl
   import_tasks: cmctl.yml
   tags: ["binaries", "cmctl"]
@@ -154,6 +158,14 @@
 - name: Install gh
   import_tasks: github_cli.yml
   tags: ["binaries", "gh"]
+
+- name: Install talosctl
+  import_tasks: talosctl.yml
+  tags: ["binaries", "talosctl"]
+
+- name: Install tpi
+  import_tasks: tpi.yml
+  tags: ["binaries", "tpi"]
 
 - name: Install syncthing
   import_tasks: syncthing.yml
