@@ -24,7 +24,6 @@
   when: current_talosctl_version | default('none') != talosctl_version
   become: true
   get_url:
-    # https://github.com/siderolabs/talos/releases/download/v1.9.1/talosctl-linux-amd64
     url: "https://github.com/siderolabs/talos/releases/download/{{ talosctl_version }}/talosctl-linux-{{ arch }}"
-    dest: /usr/local/bin/
+    dest: /usr/local/bin/talosctl
     mode: "u=xrw,g=xr,o=x"
