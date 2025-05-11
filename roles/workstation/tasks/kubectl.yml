@@ -1,14 +1,14 @@
 - name: Find latest version of kubectl
   when: kubectl_version is not defined
   uri:
-    url: https://storage.googleapis.com/kubernetes-release/release/stable.txt
+    url: https://dl.k8s.io/release/stable.txt
     return_content: true
-  register: webpage
+  register: latest_release
 
 - name: Set kubectl version
   when: kubectl_version is not defined
   set_fact:
-    kubectl_version: "{{ webpage.content | trim }}"
+    kubectl_version: "{{ latest_release.content }}"
 
 - name: Check current kubectl version
   command: kubectl version --client=true -o json
@@ -25,7 +25,7 @@
   when: current_kubectl_version | default('none') != kubectl_version
   become: true
   get_url:
-    url: "https://storage.googleapis.com/kubernetes-release/release/{{ kubectl_version }}/bin/linux/{{ arch }}/kubectl"
+    url: "https://dl.k8s.io/release/{{ kubectl_version }}/bin/linux/{{ arch }}/kubectl"
     dest: /usr/local/bin/kubectl
     force: true
 
