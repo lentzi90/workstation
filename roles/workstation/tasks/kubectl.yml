@@ -35,18 +35,12 @@
     path: /usr/local/bin/kubectl
     mode: "u=xrw,g=xr,o=x"
 
-- name: Make sure .kube folder exists
-  file:
-    path: /home/{{ ansible_user_id }}/.kube
-    state: directory
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_id }}"
-
-- name: Store bash completion for kubectl
-  shell: kubectl completion bash > ~/.kube/completion.bash.inc
-
 - name: Add to bash_profile
   blockinfile:
+    # TODO: Remove after some period. This is here to remove the block
+    # from machines that had it inserted before.
+    # It is now handled through the dotfiles repo.
+    state: absent
     content: |
       # Kubectl shell completion
       # See https://kubernetes.io/docs/reference/kubectl/cheatsheet/#bash
