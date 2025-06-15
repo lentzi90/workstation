@@ -29,16 +29,6 @@ ansible-playbook setup.yml -K # -e github_token=${GITHUB_TOKEN}
 Not everything is installed by default.
 To install everything, add `-e install_extras=true`.
 
-## Get latest versions
-
-Check what the latest versions of some binaries are:
-
-```bash
-ansible-playbook setup.yml --tags=versions
-```
-
-This will generate the file `versions.yaml` with version numbers that can be used to set the versions you want to freeze.
-
 ## Configure VS Code flatpak access to docker
 
 The playbook already configures access to the docker socket, but the docker executable is not in the PATH.
