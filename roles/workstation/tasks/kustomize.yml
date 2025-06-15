@@ -1,35 +1,14 @@
-# Note that kustomize has multiple components and it is not guaranteed that
-# the `kustomize` binary will be the latest release. Therefore we need
-# to check them all and find the latest that starts with "kustomize"
-- name: Find latest versions of kustomize
-  when: kustomize_version is not defined
-  uri:
-    url: https://api.github.com/repos/kubernetes-sigs/kustomize/releases
-    return_content: true
-  register: releases
-
-- name: Set kustomize version
-  when: kustomize_version is not defined
-  set_fact:
-    # Kustomize has multiple components which means that they use tags like "kustomize/vx.y.z", so we have to parse it a bit.
-    kustomize_version: "{{ releases.content | from_json | json_query(kustomize_tag_query) | first | regex_search('v([0-9]+\\.){2}[0-9]+') }}"
+- name: Include GitHub release version check
+  ansible.builtin.include_tasks: common/github_release.yml
   vars:
-    kustomize_tag_query: "[?starts_with(tag_name, 'kustomize')].tag_name"
+    binary_name: kustomize
+    repo: kubernetes-sigs/kustomize
+    releases_url_suffix: "" # Get all releases, not just latest
+    tag_filter_query: "[?starts_with(tag_name, 'kustomize')].tag_name | [0]"
+    version_check_command: kustomize version
+    version_pattern: "v([0-9]+\\.){2}[0-9]+"
 
-- name: Check current kustomize version
-  command: kustomize version
-  register: kustomize_output
-  ignore_errors: true
-  changed_when: False
-
-- name: Set current kustomize version
-  when: kustomize_output is succeeded
-  set_fact:
-    # Find the current kustomize version. Output is of the form
-    # {Version:kustomize/v4.0.5 GitCommit:9e8e7a7fe99ec9fbf801463e8607928322fc5245 BuildDate:2021-03-08T20:53:03Z GoOs:linux GoArch:amd64}
-    current_kustomize_version: "{{ kustomize_output.stdout_lines[0] | regex_search('v([0-9]+\\.){2}[0-9]+') }}"
-
-- name: Download, extract and install kustomize
+- name: Download and install kustomize
   when: current_kustomize_version | default('none') != kustomize_version
   become: true
   unarchive:

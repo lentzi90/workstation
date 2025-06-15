@@ -1,0 +1,39 @@
+# Common task to find and set the latest version of a GitHub release
+# Required variables:
+#   - binary_name: The name of the binary/tool (e.g., 'helm', 'kustomize')
+#   - repo: The GitHub repository (e.g., 'helm/helm', 'kubernetes-sigs/kustomize')
+#   - version_check_command: Command to check current version (defaults to '{{ binary_name }} version')
+#   - version_pattern: Regex pattern to extract version (defaults to 'v([0-9]+\.){2}[0-9]+')
+#   - tag_filter_query: JMESPath query to filter release tags (optional)
+#   - releases_url_suffix: URL suffix for releases API (defaults to '/latest')
+
+- name: Find latest version of {{ binary_name }}
+  when: hostvars[inventory_hostname][binary_name + '_version'] is not defined
+  uri:
+    url: "https://api.github.com/repos/{{ repo }}/releases{{ releases_url_suffix | default('/latest') }}"
+    return_content: true
+    headers: "{{ {'Authorization': 'Bearer ' + github_token} if github_token is defined else {} }}"
+  register: latest_release
+
+- name: Get raw version
+  when: hostvars[inventory_hostname][binary_name + '_version'] is not defined
+  set_fact:
+    raw_version: "{{ latest_release.content | from_json | json_query(tag_filter) }}"
+  vars:
+    tag_filter: "{{ tag_filter_query | default('tag_name') }}"
+
+- name: Set {{ binary_name }} version
+  when: hostvars[inventory_hostname][binary_name + '_version'] is not defined
+  set_fact:
+    "{{ binary_name }}_version": "{{ raw_version | regex_search(version_pattern | default('v([0-9]+\\.){2}[0-9]+')) }}"
+
+- name: Check current {{ binary_name }} version
+  command: "{{ version_check_command | default(binary_name + ' version') }}"
+  register: version_output
+  ignore_errors: true
+  changed_when: false
+
+- name: Set current {{ binary_name }} version
+  when: version_output is succeeded
+  set_fact:
+    "current_{{ binary_name }}_version": "{{ version_output.stdout_lines[0] | regex_search(version_pattern | default('v([0-9]+\\.){2}[0-9]+')) }}"

@@ -1,36 +1,16 @@
-- name: Find latest version of argocd
-  when: argocd_version is not defined
-  uri:
-    url: https://api.github.com/repos/argoproj/argo-cd/releases/latest
-    return_content: true
-  register: latest_release
+- name: Include GitHub release version check
+  ansible.builtin.include_tasks: common/github_release.yml
+  vars:
+    binary_name: argocd
+    repo: argoproj/argo-cd
+    version_check_command: argocd version --client -o json
+    version_pattern: v([0-9]+\.){2}[0-9]+
 
-- name: Set argocd version
-  when: argocd_version is not defined
-  set_fact:
-    argocd_version: "{{ (latest_release.content | from_json).tag_name }}"
-
-- name: Check current argocd version
-  command: argocd version --client -o json
-  register: argocd_output
-  ignore_errors: true
-  changed_when: False
-
-- name: Set current argocd version
-  when: argocd_output is succeeded
-  set_fact:
-    current_argocd_version: "{{ (argocd_output.stdout | from_json).client.Version | regex_search('v([0-9]+\\.){2}[0-9]+')}}"
-
-- name: Download argocd
+- name: Download and install argocd
   when: current_argocd_version | default('none') != argocd_version
   become: true
   get_url:
     url: https://github.com/argoproj/argo-cd/releases/download/{{ argocd_version }}/argocd-linux-{{ arch }}
     dest: /usr/local/bin/argocd
     force: true
-
-- name: Make argocd executable
-  become: true
-  file:
-    path: /usr/local/bin/argocd
     mode: "u=xrw,g=xr,o=x"

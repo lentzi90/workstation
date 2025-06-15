@@ -1,25 +1,10 @@
-- name: Find latest version of krew
-  when: krew_version is not defined
-  uri:
-    url: https://api.github.com/repos/kubernetes-sigs/krew/releases/latest
-    return_content: true
-  register: latest_release
-
-- name: Set krew version
-  when: krew_version is not defined
-  set_fact:
-    krew_version: "{{ (latest_release.content | from_json).tag_name }}"
-
-- name: Check current krew version
-  command: kubectl krew version
-  register: krew_output
-  ignore_errors: true
-  changed_when: False
-
-- name: Set current krew version
-  when: krew_output is succeeded
-  set_fact:
-    current_krew_version: "{{ krew_output.stdout | regex_search('v([0-9]+\\.){2}[0-9]+') }}"
+- name: Include GitHub release version check
+  ansible.builtin.include_tasks: common/github_release.yml
+  vars:
+    binary_name: krew
+    repo: kubernetes-sigs/krew
+    version_check_command: kubectl krew version
+    version_pattern: v([0-9]+\.){2}[0-9]+
 
 - name: Download and extract krew
   when: current_krew_version | default('none') != krew_version
@@ -28,10 +13,10 @@
     dest: /tmp
     remote_src: true
     extra_opts:
-      # Skip the folder
-      - --strip=1
-      # The specific file(s) to extract
-      - ./krew-linux_amd64
+    # Skip the folder
+    - --strip=1
+    # The specific file(s) to extract
+    - ./krew-linux_amd64
 
 - name: Install krew
   when: current_krew_version | default('none') != krew_version

@@ -1,31 +1,16 @@
-- name: Find latest version of minikube
-  when: minikube_version is not defined
-  uri:
-    url: https://api.github.com/repos/kubernetes/minikube/releases/latest
-    return_content: true
-  register: latest_release
+- name: Include GitHub release version check
+  ansible.builtin.include_tasks: common/github_release.yml
+  vars:
+    binary_name: minikube
+    repo: kubernetes/minikube
+    version_check_command: minikube version --short
+    version_pattern: v([0-9]+\.){2}[0-9]+
 
-- name: Set minikube version
-  when: minikube_version is not defined
-  set_fact:
-    minikube_version: "{{ (latest_release.content | from_json).tag_name }}"
-
-- name: Check current minikube version
-  command: minikube version --output json
-  register: minikube_output
-  ignore_errors: true
-  changed_when: False
-
-- name: Set current minikube version
-  when: minikube_output is succeeded
-  set_fact:
-    current_minikube_version: "{{ (minikube_output.stdout | from_json).minikubeVersion }}"
-
-- name: Download minikube
+- name: Download and install minikube
   when: current_minikube_version | default('none') != minikube_version
   become: true
   get_url:
-    url: https://github.com/kubernetes/minikube/releases/download/{{ minikube_version }}/minikube-linux-{{ arch }}
+    url: "https://github.com/kubernetes/minikube/releases/download/{{ minikube_version }}/minikube-linux-{{ arch }}"
     dest: /usr/local/bin/minikube
     mode: "u=xrw,g=xr,o=x"
     force: true

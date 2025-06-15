@@ -1,42 +1,16 @@
-- name: Find latest version of clusterctl
-  when: clusterctl_version is not defined
-  uri:
-    url: https://api.github.com/repos/kubernetes-sigs/cluster-api/releases/latest
-    return_content: true
-  register: latest_release
+- name: Include GitHub release version check
+  ansible.builtin.include_tasks: common/github_release.yml
+  vars:
+    binary_name: clusterctl
+    repo: kubernetes-sigs/cluster-api
+    version_check_command: clusterctl version -o short
+    version_pattern: v([0-9]+\.){2}[0-9]+
 
-- name: Set clusterctl version
-  when: clusterctl_version is not defined
-  set_fact:
-    clusterctl_version: "{{ (latest_release.content | from_json).tag_name }}"
-
-- name: Check current clusterctl version
-  command: clusterctl version -o short
-  register: clusterctl_output
-  ignore_errors: true
-  changed_when: False
-
-- name: Set current clusterctl version
-  when: clusterctl_output is succeeded
-  set_fact:
-    current_clusterctl_version: "{{ clusterctl_output.stdout_lines[0] | regex_search('v([0-9]+\\.){2}[0-9]+') }}"
-
-- name: Download clusterctl
+- name: Download and install clusterctl
   when: current_clusterctl_version | default('none') != clusterctl_version
   become: true
   get_url:
     url: https://github.com/kubernetes-sigs/cluster-api/releases/download/{{ clusterctl_version }}/clusterctl-linux-{{ arch }}
     dest: /usr/local/bin/clusterctl
-    mode: "u=xrw,g=xr,o=x"
     force: true
-
-- name: Add to bash_profile
-  blockinfile:
-    state: absent
-    content: |
-      # Clusterctl shell completion
-      source $HOME/.kube/clusterctl_completion.bash.inc
-      alias c=clusterctl
-      complete -F __start_clusterctl c
-    path: /home/{{ ansible_user_id }}/.bashrc
-    marker: "# {mark} ANSIBLE MANAGED BLOCK CLUSTERCTL"
+    mode: "u=xrw,g=xr,o=x"

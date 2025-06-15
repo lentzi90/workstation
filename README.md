@@ -21,7 +21,7 @@ pip install ansible jmespath
 ansible-galaxy collection install community.general
 git clone https://github.com/lentzi90/workstation.git
 cd workstation
-ansible-playbook setup.yml -K
+ansible-playbook setup.yml -K # -e github_token=${GITHUB_TOKEN}
 ```
 
 ## Install extras
@@ -38,14 +38,6 @@ ansible-playbook setup.yml --tags=versions
 ```
 
 This will generate the file `versions.yaml` with version numbers that can be used to set the versions you want to freeze.
-
-## Set git signing key and email
-
-```bash
-git config --global user.email <email>
-git config --global user.signingKey <key>
-git config --global commit.gpgsign true
-```
 
 ## Configure VS Code flatpak access to docker
 

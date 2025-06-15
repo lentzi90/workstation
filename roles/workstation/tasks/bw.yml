@@ -1,30 +1,14 @@
-- name: Find latest version of bw
-  when: bw_version is not defined
-  uri:
-    url: https://api.github.com/repos/bitwarden/clients/releases
-    return_content: true
-  register: releases
-
-- name: Set kustomize version
-  when: bw_version is not defined
-  set_fact:
-    # Bitwarden clients has multiple components which means that they use tags like "cli-vYYYY.M.i", so we have to parse it a bit.
-    bw_version: "{{ releases.content | from_json | json_query(query) | first | regex_search('v[0-9]{4}\\.[0-9]+\\.[0-9]+') }}"
+- name: Include GitHub release version check
+  ansible.builtin.include_tasks: common/github_release.yml
   vars:
-    query: "[?starts_with(tag_name, 'cli')].tag_name"
+    binary_name: bw
+    repo: bitwarden/clients
+    releases_url_suffix: "" # Get all releases instead of latest
+    tag_filter_query: "[?starts_with(tag_name, 'cli')].tag_name | [0]"
+    version_check_command: bw --version
+    version_pattern: "v[0-9]{4}\\.[0-9]+\\.[0-9]+"
 
-- name: Check current bw version
-  command: bw --version
-  register: bw_output
-  ignore_errors: true
-  changed_when: False
-
-- name: Set current bw version
-  when: bw_output is succeeded
-  set_fact:
-    current_bw_version: "v{{ bw_output.stdout_lines[0] | regex_search('[0-9]{4}\\.[0-9]+\\.[0-9]+') }}"
-
-- name: Download, extract and install bw
+- name: Download and install bw
   when: current_bw_version | default('none') != bw_version
   become: true
   unarchive:

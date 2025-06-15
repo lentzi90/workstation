@@ -1,27 +1,12 @@
-- name: Find latest version of starship
-  uri:
-    url: https://api.github.com/repos/starship/starship/releases/latest
-    return_content: true
-  register: latest_release
+- name: Include GitHub release version check
+  ansible.builtin.include_tasks: common/github_release.yml
+  vars:
+    binary_name: starship
+    repo: starship/starship
+    version_check_command: starship --version
+    version_pattern: v([0-9]+\.){2}[0-9]+
 
-- name: Set starship version
-  when: starship_version is not defined
-  set_fact:
-    starship_version: "{{ (latest_release.content | from_json).tag_name }}"
-
-- name: Check current starship version
-  command: starship --version
-  register: starship_output
-  ignore_errors: true
-  changed_when: False
-
-- name: Set current starship version
-  when: starship_output is succeeded
-  set_fact:
-    # Find the current starship version. Output if of the form "starship x.y.z" and we want to turn it into "vx.y.z"
-    current_starship_version: "v{{ starship_output.stdout_lines[0] | regex_search('([0-9]+\\.){2}[0-9]+') }}"
-
-- name: Download, extract and install starship
+- name: Download and install starship
   when: current_starship_version | default('none') != starship_version
   become: true
   unarchive:
@@ -29,7 +14,7 @@
     dest: /usr/local/bin/
     remote_src: true
 
-- name: Add starship to bash_profile
+- name: Add starship to bashrc
   blockinfile:
     content: |
       # Starship

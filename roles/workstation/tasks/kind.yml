@@ -1,31 +1,16 @@
-- name: Find latest version of kind
-  when: kind_version is not defined
-  uri:
-    url: https://api.github.com/repos/kubernetes-sigs/kind/releases/latest
-    return_content: true
-  register: latest_release
+- name: Include GitHub release version check
+  ansible.builtin.include_tasks: common/github_release.yml
+  vars:
+    binary_name: kind
+    repo: kubernetes-sigs/kind
+    version_check_command: kind version
+    version_pattern: v([0-9]+\.){2}[0-9]+
 
-- name: Set kind version
-  when: kind_version is not defined
-  set_fact:
-    kind_version: "{{ (latest_release.content | from_json).tag_name }}"
-
-- name: Check current kind version
-  command: kind version
-  register: kind_output
-  ignore_errors: true
-  changed_when: False
-
-- name: Set current kind version
-  when: kind_output is succeeded
-  set_fact:
-    current_kind_version: "{{ kind_output.stdout_lines[0] | regex_search('v([0-9]+\\.){2}[0-9]+') }}"
-
-- name: Download kind
+- name: Download and install kind
   when: current_kind_version | default('none') != kind_version
   become: true
   get_url:
-    url: https://github.com/kubernetes-sigs/kind/releases/download/{{ kind_version }}/kind-linux-{{ arch }}
+    url: "https://github.com/kubernetes-sigs/kind/releases/download/{{ kind_version }}/kind-linux-{{ arch }}"
     dest: /usr/local/bin/kind
     mode: "u=xrw,g=xr,o=x"
     force: true

@@ -1,27 +1,11 @@
-- name: Find latest version of helm
-  when: helm_version is not defined
-  uri:
-    url: https://api.github.com/repos/helm/helm/releases/latest
-    return_content: true
-  register: latest_release
+- name: Include GitHub release version check
+  ansible.builtin.include_tasks: common/github_release.yml
+  vars:
+    binary_name: helm
+    repo: helm/helm
+    version_check_command: helm version --template "{{'{{'}}.Version{{'}}'}}"
 
-- name: Set helm version
-  when: helm_version is not defined
-  set_fact:
-    helm_version: "{{ (latest_release.content | from_json).tag_name }}"
-
-- name: Check current helm version
-  command: helm version --template "{{'{{'}}.Version{{'}}'}}"
-  register: helm_output
-  ignore_errors: true
-  changed_when: False
-
-- name: Set current helm version
-  when: helm_output is succeeded
-  set_fact:
-    current_helm_version: "{{ helm_output.stdout }}"
-
-- name: Download helm
+- name: Download and install helm
   when: current_helm_version | default('none') != helm_version
   become: true
   unarchive:
