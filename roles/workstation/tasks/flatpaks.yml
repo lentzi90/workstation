@@ -8,27 +8,26 @@
 - name: Install flatpaks
   community.general.flatpak:
     name:
-      - com.bitwarden.desktop
-      - org.mozilla.firefox
-      - com.visualstudio.code
-      - com.github.tchx84.Flatseal
-      - org.gnome.gitg
-      - org.gnome.meld
-      - org.gnome.DejaDup
-      - org.gnome.Polari
-      - org.filezillaproject.Filezilla
-      - com.slack.Slack
-      - org.videolan.VLC
-      - com.getpostman.Postman
-      - org.telegram.desktop
-      - org.libreoffice.LibreOffice
-      - org.freedesktop.Sdk.Extension.golang/x86_64/22.08
-      - it.mijorus.gearlever
-      - dev.zed.Zed
-      - com.github.maoschanz.drawing
+    - be.alexandervanhee.gradia
+    - com.bitwarden.desktop
+    - com.getpostman.Postman
+    - com.github.maoschanz.drawing
+    - com.github.tchx84.Flatseal
+    - com.slack.Slack
+    - com.visualstudio.code
+    - dev.zed.Zed
+    - it.mijorus.gearlever
+    - org.filezillaproject.Filezilla
+    - org.gnome.gitg
+    - org.gnome.meld
+    - org.gnome.DejaDup
+    - org.gnome.Polari
+    - org.mozilla.firefox
+    - org.videolan.VLC
+    - org.telegram.desktop
+    - org.libreoffice.LibreOffice
 
 - name: Configure VS Code
   command: "{{ item }}"
   loop:
-    - flatpak override --user --filesystem=/run/docker.sock com.visualstudio.code
-    - flatpak override --user --env=FLATPAK_ENABLE_SDK_EXT=golang com.visualstudio.code
+  - flatpak override --user --filesystem=/run/docker.sock com.visualstudio.code
