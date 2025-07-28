@@ -6,6 +6,7 @@
 #   - version_pattern: Regex pattern to extract version (defaults to 'v([0-9]+\.){2}[0-9]+')
 #   - tag_filter_query: JMESPath query to filter release tags (optional)
 #   - releases_url_suffix: URL suffix for releases API (defaults to '/latest')
+#   - add_v_prefix: Whether to add 'v' prefix to compared version (defaults to false)
 
 - name: Find latest version of {{ binary_name }}
   when: hostvars[inventory_hostname][binary_name + '_version'] is not defined
@@ -36,4 +37,4 @@
 - name: Set current {{ binary_name }} version
   when: version_output is succeeded
   set_fact:
-    "current_{{ binary_name }}_version": "{{ version_output.stdout_lines[0] | regex_search(version_pattern | default('v([0-9]+\\.){2}[0-9]+')) }}"
+    "current_{{ binary_name }}_version": "{{ 'v' if (add_v_prefix | default(false)) else '' }}{{ version_output.stdout_lines[0] | regex_search(version_pattern | default('([0-9]+\\.){2}[0-9]+')) }}"

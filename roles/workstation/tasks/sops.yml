@@ -4,12 +4,14 @@
     binary_name: sops
     repo: getsops/sops
     version_check_command: sops --version
-    version_pattern: ([0-9]+\.){2}[0-9]+
+    version_pattern: v([0-9]+\.){2}[0-9]+
+    add_v_prefix: true
 
 - name: Download and install sops
   when: current_sops_version | default('none') != sops_version
   become: true
   get_url:
+    # https://github.com/getsops/sops/releases/download/v3.10.2/sops-v3.10.2.linux.amd64
     url: "https://github.com/getsops/sops/releases/download/{{ sops_version }}/sops-{{ sops_version }}.linux.{{ arch }}"
     dest: /usr/local/bin/sops
     mode: "u=xrw,g=xr,o=x"
