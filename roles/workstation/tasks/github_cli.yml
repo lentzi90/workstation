@@ -17,4 +17,4 @@
     # Skip the folder
     - --strip=2
     # The specific file(s) to extract
-    - gh_{{ gh_version }}_linux_{{ arch }}/bin/gh
+    - gh_{{ gh_version | replace('v', '') }}_linux_{{ arch }}/bin/gh
