@@ -17,6 +17,6 @@
 
 - name: Install OpenCloud AppImage
   get_url:
-    url: https://github.com/opencloud-eu/desktop/releases/latest/download/OpenCloud_Desktop-v1.0.0-linux-gcc-x86_64.AppImage
+    url: https://github.com/opencloud-eu/desktop/releases/download/v2.0.0/OpenCloud_Desktop-v2.0.0-linux-gcc-x86_64.AppImage
     dest: "{{ ansible_user_dir }}/AppImages/opencloud_desktop_desktop_sync_client.appimage"
     force: false
