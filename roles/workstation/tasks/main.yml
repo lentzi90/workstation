@@ -133,9 +133,10 @@
   import_tasks: tilt.yml
   tags: ["binaries", "tilt"]
 
-- name: Install yubikey touch detector
-  import_tasks: yubikey-touch-detector.yml
-  tags: ["binaries", "yubikey-touch-detector"]
+# TODO: Fix installation by building in a container
+# - name: Install yubikey touch detector
+#   import_tasks: yubikey-touch-detector.yml
+#   tags: ["binaries", "yubikey-touch-detector"]
 
 - name: Install yq
   import_tasks: yq.yml
