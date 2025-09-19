@@ -20,30 +20,35 @@
   set_fact:
     current_ytd_version: "{{ ytd_output.stdout_lines[0] | regex_search('([0-9]+\\.){2}[0-9]+') }}"
 
-# - name: Download, extract and install yubikey-touch-detector
-#   become: true
-#   unarchive:
-#     src: "https://github.com/maximbaz/yubikey-touch-detector/releases/download/{{ (latest_release.content | from_json).tag_name }}/yubikey-touch-detector-{{ (latest_release.content | from_json).tag_name }}-linux64.tar.gz"
-#     dest: /usr/local/bin/
-#     remote_src: true
-#     extra_opts:
-#       # Skip the folder
-#       - --strip=1
-#       # The specific file(s) to extract
-#       - yubikey-touch-detector-{{ (latest_release.content | from_json).tag_name }}-linux64/yubikey-touch-detector
-
-- name: Install yubikey-touch-detector
+- name: Create temporary build directory
   when: current_ytd_version | default('none') != ytd_version
-  command: go install github.com/maximbaz/yubikey-touch-detector@{{ (latest_release.content | from_json).tag_name }}
+  tempfile:
+    state: directory
+    prefix: ytd_build_
+  register: build_dir
+
+- name: Build yubikey-touch-detector in container
+  when: current_ytd_version | default('none') != ytd_version
+  command: |
+    podman run --rm -v {{ build_dir.path }}:/output \
+      --security-opt label=disable golang:latest \
+      /bin/bash -c "apt-get update && apt-get install -y libgpgme-dev && cd /tmp && go install -ldflags '-X main.version={{ ytd_version }}' github.com/maximbaz/yubikey-touch-detector@{{ ytd_version }} && cp /go/bin/yubikey-touch-detector /output/"
 
 - name: Copy the binary to /usr/local/bin/
   when: current_ytd_version | default('none') != ytd_version
   become: true
   copy:
-    src: /home/{{ ansible_user_id }}/go/bin/yubikey-touch-detector
+    src: "{{ build_dir.path }}/yubikey-touch-detector"
     dest: /usr/local/bin/yubikey-touch-detector
+    mode: '0755'
     remote_src: true
     force: true
+
+- name: Clean up build directory
+  when: current_ytd_version | default('none') != ytd_version
+  file:
+    path: "{{ build_dir.path }}"
+    state: absent
 
 - name: Ensure user systemd folder
   file:
