@@ -26,6 +26,7 @@
     - org.videolan.VLC
     - org.telegram.desktop
     - org.libreoffice.LibreOffice
+    - com.github.jeromerobert.pdfarranger
 
 - name: Configure VS Code
   command: "{{ item }}"
