@@ -1,0 +1,18 @@
+- name: Include GitHub release version check
+  ansible.builtin.include_tasks: common/github_release.yml
+  vars:
+    binary_name: chainsaw
+    repo: kyverno/chainsaw
+    version_check_command: chainsaw version
+    version_pattern: ([0-9]+\.){2}[0-9]+
+
+- name: Download, extract and install chainsaw
+  when: current_chainsaw_version | default('none') != chainsaw_version
+  become: true
+  unarchive:
+    src: https://github.com/kyverno/chainsaw/releases/download/{{ chainsaw_version }}/chainsaw_linux_{{ arch }}.tar.gz
+    dest: /usr/local/bin/
+    remote_src: true
+    extra_opts:
+    # The specific file(s) to extract
+    - chainsaw

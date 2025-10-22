@@ -55,6 +55,10 @@
   when: ansible_distribution == 'Ubuntu'
   tags: ["chrome"]
 
+- name: Install chainsaw
+  import_tasks: chainsaw.yml
+  tags: ["binaries", "chainsaw"]
+
 - name: Install fzf
   import_tasks: fzf.yml
   tags: ["binaries", "fzf"]
