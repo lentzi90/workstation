@@ -4,7 +4,7 @@
     binary_name: distrobox
     repo: 89luca89/distrobox
     version_check_command: distrobox version
-    version_pattern: ([0-9]+\.){2}[0-9]+
+    version_pattern: ([0-9]+\.){3}[0-9]+
 
 - name: Download and install distrobox
   when: current_distrobox_version | default('none') != distrobox_version
@@ -14,8 +14,8 @@
     dest: /usr/local/bin/
     remote_src: true
     extra_opts:
-      # Skip the folder
-      - --strip=1
-      - --wildcards
-      # The specific file(s) to extract
-      - distrobox-{{ distrobox_version }}/distrobox*
+    # Skip the folder
+    - --strip=1
+    - --wildcards
+    # The specific file(s) to extract
+    - distrobox-{{ distrobox_version }}/distrobox*
