@@ -1,25 +1,5 @@
 - name: Install base packages
   become: true
-  when: ansible_distribution == 'Fedora' and ansible_pkg_mgr != 'atomic_container'
-  dnf:
-    name:
-    - python3-libselinux
-    - git
-    - htop
-    - screenfetch
-    - unzip
-    - vim-enhanced
-    - hunspell-sv
-    - langpacks-sv
-    - langpacks-en
-    - logrotate
-    - nfs-utils
-    - wget
-    - tar
-    - byobu
-
-- name: Install base packages
-  become: true
   when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
   package:
     name:
