@@ -1,24 +1,10 @@
-- name: Find latest version of yubikey-touch-detector
-  uri:
-    url: https://api.github.com/repos/maximbaz/yubikey-touch-detector/releases/latest
-    return_content: true
-  register: latest_release
-
-- name: Set ytd version
-  when: ytd_version is not defined
-  set_fact:
-    ytd_version: "{{ (latest_release.content | from_json).tag_name }}"
-
-- name: Check current ytd version
-  command: yubikey-touch-detector -version
-  register: ytd_output
-  ignore_errors: true
-  changed_when: False
-
-- name: Set current ytd version
-  when: ytd_output is succeeded
-  set_fact:
-    current_ytd_version: "{{ ytd_output.stdout_lines[0] | regex_search('([0-9]+\\.){2}[0-9]+') }}"
+- name: Include GitHub release version check
+  ansible.builtin.include_tasks: common/github_release.yml
+  vars:
+    binary_name: ytd
+    repo: maximbaz/yubikey-touch-detector
+    version_check_command: yubikey-touch-detector -version
+    version_pattern: ([0-9]+\.){2}[0-9]+
 
 - name: Create temporary build directory
   when: current_ytd_version | default('none') != ytd_version

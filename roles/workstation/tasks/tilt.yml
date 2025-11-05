@@ -2,27 +2,13 @@
   ansible.builtin.set_fact:
     tilt_arch: "{{ 'arm64' if ansible_architecture == 'aarch64' else 'x86_64' if ansible_architecture == 'x86_64' else ansible_architecture }}"
 
-- name: Find latest version of tilt
-  uri:
-    url: https://api.github.com/repos/tilt-dev/tilt/releases/latest
-    return_content: true
-  register: latest_release
-
-- name: Set tilt version
-  when: tilt_version is not defined
-  set_fact:
-    tilt_version: "{{ (latest_release.content | from_json).tag_name }}"
-
-- name: Check current tilt version
-  command: tilt version
-  register: tilt_output
-  ignore_errors: true
-  changed_when: False
-
-- name: Set current tilt version
-  when: tilt_output is succeeded
-  set_fact:
-    current_tilt_version: "{{ tilt_output.stdout_lines[0] | regex_search('v([0-9]+\\.){2}[0-9]+') }}"
+- name: Include GitHub release version check
+  ansible.builtin.include_tasks: common/github_release.yml
+  vars:
+    binary_name: tilt
+    repo: tilt-dev/tilt
+    version_check_command: tilt version
+    version_pattern: v([0-9]+\.){2}[0-9]+
 
 - name: Download, extract and install tilt
   when: current_tilt_version | default('none') != tilt_version
