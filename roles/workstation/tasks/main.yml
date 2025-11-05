@@ -26,6 +26,7 @@
     - byobu
     - pam-u2f
     - pamu2fcfg
+    - gnupg2-scdaemon
     - gcc
 
 - name: Configure host for rootless kind
