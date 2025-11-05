@@ -6,8 +6,6 @@
     version_check_command: k9s version
     version_pattern: v([0-9]+\.){2}[0-9]+
 
-
-
 - name: Download, extract and install k9s
   when: current_k9s_version | default('none') != k9s_version
   become: true

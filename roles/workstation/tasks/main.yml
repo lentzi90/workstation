@@ -34,10 +34,10 @@
   tags: ["kind", "rootless"]
 
 - import_tasks: golang.yml
-  tags: ["golang"]
+  tags: ["golang", "binaries"]
 
 - import_tasks: rust.yml
-  tags: ["rust"]
+  tags: ["rust", "binaries"]
 
 - name: Install crates
   import_tasks: crates.yml

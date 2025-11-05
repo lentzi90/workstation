@@ -1,9 +1,7 @@
 - name: Install extra flatpaks
   community.general.flatpak:
     name:
-      - org.octave.Octave
-      - org.nextcloud.Nextcloud
-      - com.valvesoftware.Steam
-      - org.texstudio.TeXstudio
-
-# TODO: flatpak override com.valvesoftware.Steam --filesystem=/media/Data
+    - org.octave.Octave
+    - org.nextcloud.Nextcloud
+    - com.valvesoftware.Steam
+    - org.texstudio.TeXstudio
