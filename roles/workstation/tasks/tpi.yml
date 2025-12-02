@@ -4,7 +4,7 @@
     binary_name: tpi
     repo: turing-machines/tpi
     version_check_command: tpi --version
-    version_pattern: v([0-9]+\.){2}[0-9]+
+    version_pattern: ([0-9]+\.){2}[0-9]+
 
 - name: Download, extract and install tpi
   when: current_tpi_version | default('none') != tpi_version
