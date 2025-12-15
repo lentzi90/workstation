@@ -4,7 +4,7 @@
     binary_name: chainsaw
     repo: kyverno/chainsaw
     version_check_command: chainsaw version
-    version_pattern: ([0-9]+\.){2}[0-9]+
+    version_pattern: v([0-9]+\.){2}[0-9]+
 
 - name: Download, extract and install chainsaw
   when: current_chainsaw_version | default('none') != chainsaw_version
