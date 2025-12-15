@@ -1,0 +1,81 @@
+# Common task to install a systemd-sysext overlay
+# Required variables:
+#   - sysext_name: The name of the sysext (e.g., 'moby-engine')
+#
+# Optional variables:
+#   - sysext_base_url: Base URL for sysext configuration (defaults to 'https://extensions.fcos.fr/fedora')
+
+- name: Ensure sysext directories exist
+  become: true
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+    owner: root
+    group: root
+  loop:
+  - /var/lib/extensions
+  - /var/lib/extensions.d
+
+- name: Restore SELinux context for sysext directories
+  become: true
+  ansible.builtin.command:
+    cmd: restorecon -RFv /var/lib/extensions /var/lib/extensions.d
+  changed_when: false
+
+- name: Enable and start systemd-sysext service
+  become: true
+  ansible.builtin.systemd:
+    name: systemd-sysext.service
+    enabled: true
+    state: started
+
+- name: Create sysupdate configuration directory for {{ sysext_name }}
+  become: true
+  ansible.builtin.file:
+    path: /etc/sysupdate.{{ sysext_name }}.d
+    state: directory
+    mode: '0755'
+    owner: root
+    group: root
+
+- name: Restore SELinux context for sysupdate configuration directory
+  become: true
+  ansible.builtin.command:
+    cmd: restorecon -RFv /etc/sysupdate.{{ sysext_name }}.d
+  changed_when: false
+
+- name: Download sysext configuration for {{ sysext_name }}
+  become: true
+  ansible.builtin.get_url:
+    url: "{{ sysext_base_url | default('https://extensions.fcos.fr/fedora') }}/{{ sysext_name }}.conf"
+    dest: /etc/sysupdate.{{ sysext_name }}.d/{{ sysext_name }}.conf
+    mode: '0644'
+    owner: root
+    group: root
+  register: sysext_config
+
+- name: Install/Update {{ sysext_name }} sysext
+  become: true
+  ansible.builtin.command:
+    cmd: /usr/lib/systemd/systemd-sysupdate update --component {{ sysext_name }}
+  register: sysext_update
+  changed_when: "'Downloaded' in sysext_update.stderr or 'Installed' in sysext_update.stderr"
+
+- name: Restart systemd-sysext service to merge extensions
+  become: true
+  ansible.builtin.systemd:
+    name: systemd-sysext.service
+    state: restarted
+  when: sysext_update.changed
+
+- name: Verify sysext status
+  ansible.builtin.command:
+    cmd: systemd-sysext status
+  changed_when: false
+  register: sysext_status
+
+- name: Display sysext status
+  ansible.builtin.debug:
+    msg: "{{ sysext_status.stdout_lines }}"
+  when: sysext_update.changed

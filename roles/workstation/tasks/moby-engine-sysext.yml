@@ -1,0 +1,38 @@
+# Install moby-engine (Docker) as a systemd-sysext overlay
+# This provides Docker on Fedora Silverblue without layering packages
+
+- name: Install moby-engine sysext
+  include_tasks: common/sysext.yml
+  vars:
+    sysext_name: moby-engine
+
+- name: Create docker group
+  become: true
+  ansible.builtin.group:
+    name: docker
+    state: present
+    system: true
+
+- name: Add user to docker group
+  become: true
+  ansible.builtin.user:
+    name: "{{ ansible_user_id }}"
+    groups: docker
+    append: true
+
+- name: Enable and start docker socket
+  become: true
+  ansible.builtin.systemd:
+    name: docker.socket
+    enabled: true
+    state: started
+
+- name: Verify docker installation
+  ansible.builtin.command:
+    cmd: docker --version
+  changed_when: false
+  register: docker_version
+
+- name: Display docker version
+  ansible.builtin.debug:
+    msg: "Docker installed via sysext: {{ docker_version.stdout }}"

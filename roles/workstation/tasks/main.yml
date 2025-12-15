@@ -18,6 +18,11 @@
   when: (ansible_distribution == 'Ubuntu') or (ansible_distribution == 'Debian')
   tags: ["docker"]
 
+- name: Install moby-engine via sysext
+  import_tasks: moby-engine-sysext.yml
+  when: ansible_pkg_mgr == 'atomic_container'
+  tags: ["docker", "sysext"]
+
 - name: Install packages for silverblue
   become: true
   when: ansible_pkg_mgr == 'atomic_container'
