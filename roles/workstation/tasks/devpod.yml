@@ -2,7 +2,7 @@
   ansible.builtin.include_tasks: common/github_release.yml
   vars:
     binary_name: devpod
-    repo: loft-sh/devpod
+    repo: skevetter/devpod
     version_check_command: devpod version
     version_pattern: v([0-9]+\.){2}[0-9]+
 
@@ -10,7 +10,7 @@
   when: current_devpod_version | default('none') != devpod_version
   become: true
   get_url:
-    url: https://github.com/loft-sh/devpod/releases/download/{{ devpod_version }}/devpod-linux-{{ arch }}
+    url: https://github.com/skevetter/devpod/releases/download/{{ devpod_version }}/devpod-linux-{{ arch }}
     dest: /usr/local/bin/devpod
     mode: "u=xrw,g=xr,o=x"
     force: true
