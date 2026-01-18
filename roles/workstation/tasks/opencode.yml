@@ -1,0 +1,19 @@
+- name: Include GitHub release version check
+  ansible.builtin.include_tasks: common/github_release.yml
+  vars:
+    binary_name: opencode
+    repo: anomalyco/opencode
+    version_check_command: opencode --version
+    version_pattern: v([0-9]+\.){2}[0-9]+
+    add_v_prefix: true
+
+- name: Download and install opencode
+  when: current_opencode_version | default('none') != opencode_version
+  become: true
+  unarchive:
+    src: "https://github.com/anomalyco/opencode/releases/download/{{ opencode_version }}/opencode-linux-x64.tar.gz"
+    dest: /usr/local/bin/
+    remote_src: true
+    extra_opts:
+    # The specific file(s) to extract
+    - opencode

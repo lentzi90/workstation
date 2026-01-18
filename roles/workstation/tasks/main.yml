@@ -167,6 +167,10 @@
   import_tasks: tpi.yml
   tags: ["binaries", "tpi"]
 
+- name: Install opencode
+  import_tasks: opencode.yml
+  tags: ["binaries", "opencode"]
+
 - name: Install syncthing
   import_tasks: syncthing.yml
   when: install_extras | default(false) | bool == true
