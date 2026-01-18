@@ -3,11 +3,10 @@
     path: "{{ ansible_user_dir }}/AppImages"
     state: directory
 
-- name: Install Warp AppImage
-  get_url:
-    url: https://app.warp.dev/download?package=appimage
-    dest: "{{ ansible_user_dir }}/AppImages/warp.appimage"
-    force: false
+- name: Uninstall Warp AppImage
+  file:
+    path: "{{ ansible_user_dir }}/AppImages/warp.appimage"
+    state: absent
 
 - name: Install DevPod AppImage
   get_url:
