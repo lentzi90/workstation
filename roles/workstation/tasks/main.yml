@@ -171,6 +171,10 @@
   import_tasks: opencode.yml
   tags: ["binaries", "opencode"]
 
+- name: Install trivy
+  import_tasks: trivy.yml
+  tags: ["binaries", "trivy"]
+
 - name: Install syncthing
   import_tasks: syncthing.yml
   when: install_extras | default(false) | bool == true
