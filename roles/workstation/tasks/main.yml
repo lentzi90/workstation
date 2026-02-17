@@ -115,6 +115,10 @@
   import_tasks: kind.yml
   tags: ["binaries", "kind"]
 
+- name: Install cloud-provider-kind
+  import_tasks: cloud-provider-kind.yml
+  tags: ["binaries", "cloud-provider-kind"]
+
 - name: Install kwok
   import_tasks: kwok.yml
   tags: ["binaries", "kwok"]

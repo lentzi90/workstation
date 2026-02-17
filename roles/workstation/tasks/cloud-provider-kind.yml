@@ -1,0 +1,18 @@
+- name: Include GitHub release version check
+  ansible.builtin.include_tasks: common/github_release.yml
+  vars:
+    binary_name: cloud_provider_kind
+    repo: kubernetes-sigs/cloud-provider-kind
+    version_check_command: cloud-provider-kind --version
+    add_v_prefix: true
+
+- name: Download, extract and install cloud-provider-kind
+  when: current_cloud_provider_kind_version | default('none') != cloud_provider_kind_version
+  become: true
+  unarchive:
+    src: "https://github.com/kubernetes-sigs/cloud-provider-kind/releases/download/{{ cloud_provider_kind_version }}/cloud-provider-kind_{{ cloud_provider_kind_version | regex_replace('^v', '') }}_linux_{{ arch }}.tar.gz"
+    dest: /usr/local/bin/
+    remote_src: true
+    extra_opts:
+    # The specific file(s) to extract
+    - cloud-provider-kind
