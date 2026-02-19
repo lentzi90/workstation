@@ -163,6 +163,10 @@
   import_tasks: github_cli.yml
   tags: ["binaries", "gh"]
 
+- name: Install github-mcp-server
+  import_tasks: github-mcp-server.yml
+  tags: ["binaries", "github-mcp-server"]
+
 - name: Install talosctl
   import_tasks: talosctl.yml
   tags: ["binaries", "talosctl"]

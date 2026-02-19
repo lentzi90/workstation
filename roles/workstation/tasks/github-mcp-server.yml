@@ -1,0 +1,22 @@
+- name: Include GitHub release version check
+  ansible.builtin.include_tasks: common/github_release.yml
+  vars:
+    binary_name: github_mcp_server
+    repo: github/github-mcp-server
+    version_check_command: github-mcp-server --version
+    version_pattern: v([0-9]+\.){2}[0-9]+
+
+- name: Set github-mcp-server arch
+  set_fact:
+    github_mcp_server_arch: "{{ 'x86_64' if arch == 'amd64' else arch }}"
+
+- name: Download and install github-mcp-server
+  when: current_github_mcp_server_version | default('none') != github_mcp_server_version
+  become: true
+  unarchive:
+    src: "https://github.com/github/github-mcp-server/releases/download/{{ github_mcp_server_version }}/github-mcp-server_Linux_{{ github_mcp_server_arch }}.tar.gz"
+    dest: /usr/local/bin/
+    remote_src: true
+    extra_opts:
+    # The specific file(s) to extract
+    - github-mcp-server
