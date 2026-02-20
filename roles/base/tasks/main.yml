@@ -5,7 +5,6 @@
     name:
     - git
     - htop
-    - screenfetch
     - unzip
     - vim
     - hunspell-sv

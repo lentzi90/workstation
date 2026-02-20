@@ -1,6 +1,7 @@
 - name: Install workstation packages
   become: true
   when: ansible_distribution == 'Ubuntu'
+  tags: ["desktop"]
   package:
     name:
     - flatpak
@@ -26,6 +27,7 @@
 - name: Install packages for silverblue
   become: true
   when: ansible_pkg_mgr == 'atomic_container'
+  tags: ["desktop"]
   community.general.rpm_ostree_pkg:
     name:
     - byobu
@@ -55,11 +57,11 @@
 - import_tasks: chrome_fedora.yml
   become: true
   when: ansible_distribution == 'Fedora' and ansible_pkg_mgr != 'atomic_container'
-  tags: ["chrome"]
+  tags: ["chrome", "desktop"]
 - import_tasks: chrome_ubuntu.yml
   become: true
   when: ansible_distribution == 'Ubuntu'
-  tags: ["chrome"]
+  tags: ["chrome", "desktop"]
 
 - name: Install chainsaw
   import_tasks: chainsaw.yml
@@ -190,13 +192,13 @@
 
 - name: Install flatpaks
   import_tasks: flatpaks.yml
-  tags: ["flatpaks"]
+  tags: ["flatpaks", "desktop"]
 
 - name: Install AppImages
   import_tasks: appimages.yml
-  tags: ["appimages"]
+  tags: ["appimages", "desktop"]
 
 - name: Install extra flatpaks
   import_tasks: extra_flatpaks.yml
   when: install_extras | default(false) | bool == true
-  tags: ["extras"]
+  tags: ["extras", "desktop"]
