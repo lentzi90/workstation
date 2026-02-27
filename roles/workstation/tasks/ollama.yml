@@ -1,0 +1,95 @@
+- name: Include GitHub release version check
+  ansible.builtin.include_tasks: common/github_release.yml
+  vars:
+    binary_name: ollama
+    repo: ollama/ollama
+    version_check_command: ollama --version
+    version_pattern: v([0-9]+\.){2}[0-9]+
+    add_v_prefix: true
+
+- name: Remove old ollama libraries (recommended before upgrade)
+  when: current_ollama_version | default('none') != ollama_version
+  become: true
+  ansible.builtin.file:
+    path: /usr/lib/ollama
+    state: absent
+
+- name: Download ollama tar.zst
+  when: current_ollama_version | default('none') != ollama_version
+  become: true
+  ansible.builtin.get_url:
+    url: "https://github.com/ollama/ollama/releases/download/{{ ollama_version }}/ollama-linux-{{ arch }}.tar.zst"
+    dest: /tmp/ollama-linux-{{ arch }}.tar.zst
+    mode: "0644"
+
+- name: Extract and install ollama
+  when: current_ollama_version | default('none') != ollama_version
+  become: true
+  ansible.builtin.command:
+    cmd: tar x -C /usr -f /tmp/ollama-linux-{{ arch }}.tar.zst
+  changed_when: true
+
+- name: Clean up downloaded archive
+  when: current_ollama_version | default('none') != ollama_version
+  become: true
+  ansible.builtin.file:
+    path: /tmp/ollama-linux-{{ arch }}.tar.zst
+    state: absent
+
+- name: Create ollama group
+  become: true
+  ansible.builtin.group:
+    name: ollama
+    system: true
+
+- name: Create ollama user
+  become: true
+  ansible.builtin.user:
+    name: ollama
+    group: ollama
+    system: true
+    shell: /bin/false
+    home: /usr/share/ollama
+    create_home: true
+
+- name: Add current user to ollama group
+  become: true
+  ansible.builtin.user:
+    name: "{{ ansible_user_id }}"
+    groups: ollama
+    append: true
+
+- name: Install ollama systemd service
+  become: true
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/ollama.service
+    mode: "0644"
+    content: |
+      [Unit]
+      Description=Ollama Service
+      After=network-online.target
+
+      [Service]
+      ExecStart=/usr/bin/ollama serve
+      User=ollama
+      Group=ollama
+      Restart=always
+      RestartSec=3
+      Environment="PATH=$PATH"
+
+      [Install]
+      WantedBy=multi-user.target
+  register: ollama_service_file
+
+- name: Reload systemd daemon
+  become: true
+  when: ollama_service_file.changed
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Enable and start ollama service
+  become: true
+  ansible.builtin.systemd:
+    name: ollama
+    enabled: true
+    state: started

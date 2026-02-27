@@ -190,6 +190,11 @@
   when: install_extras | default(false) | bool == true
   tags: ["binaries", "syncthing", "extras"]
 
+- name: Install ollama
+  import_tasks: ollama.yml
+  when: install_extras | default(false) | bool == true
+  tags: ["ollama", "extras"]
+
 - name: Install flatpaks
   import_tasks: flatpaks.yml
   tags: ["flatpaks", "desktop"]
