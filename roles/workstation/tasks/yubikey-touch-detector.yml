@@ -17,7 +17,7 @@
   when: current_ytd_version | default('none') != ytd_version
   command: |
     podman run --rm -v {{ build_dir.path }}:/output \
-      --security-opt label=disable golang:latest \
+      --security-opt label=disable docker.io/library/golang:latest \
       /bin/bash -c "apt-get update && apt-get install -y libgpgme-dev && cd /tmp && go install -ldflags '-X main.version={{ ytd_version }}' github.com/maximbaz/yubikey-touch-detector@{{ ytd_version }} && cp /go/bin/yubikey-touch-detector /output/"
 
 - name: Copy the binary to /usr/local/bin/
