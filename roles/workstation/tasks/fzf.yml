@@ -24,5 +24,5 @@
     content: |
       # Set up fzf key bindings and fuzzy completion
       eval "$(fzf --bash)"
-    path: /home/{{ ansible_user_id }}/.bashrc
+    path: /home/{{ ansible_facts["user_id"] }}/.bashrc
     marker: "# {mark} ANSIBLE MANAGED BLOCK fzf"

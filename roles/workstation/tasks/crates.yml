@@ -6,6 +6,6 @@
   blockinfile:
     content: |
       eval "$(zoxide init bash)"
-    path: /home/{{ ansible_user_id }}/.bashrc
+    path: /home/{{ ansible_facts["user_id"] }}/.bashrc
     marker: "# {mark} ANSIBLE MANAGED BLOCK zoxide"
     insertafter: EOF

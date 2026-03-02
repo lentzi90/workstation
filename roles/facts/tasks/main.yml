@@ -1,4 +1,4 @@
 - name: Set facts
   ansible.builtin.set_fact:
-    distro: "{{ ansible_distribution | lower }}"
-    arch: "{{ 'arm64' if ansible_architecture == 'aarch64' else 'amd64' if ansible_architecture == 'x86_64' else ansible_architecture }}"
+    distro: "{{ ansible_facts['distribution'] | lower }}"
+    arch: "{{ 'arm64' if ansible_facts['architecture'] == 'aarch64' else 'amd64' if ansible_facts['architecture'] == 'x86_64' else ansible_facts['architecture'] }}"

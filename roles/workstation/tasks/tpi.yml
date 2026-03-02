@@ -10,7 +10,7 @@
   when: current_tpi_version | default('none') != tpi_version
   become: true
   unarchive:
-    src: "https://github.com/turing-machines/tpi/releases/download/{{ tpi_version }}/tpi-{{ ansible_architecture }}-unknown-linux-gnu.tar.gz"
+    src: "https://github.com/turing-machines/tpi/releases/download/{{ tpi_version }}/tpi-{{ ansible_facts['architecture'] }}-unknown-linux-gnu.tar.gz"
     dest: /usr/local/bin/
     remote_src: true
     extra_opts:

@@ -10,7 +10,7 @@
   when: current_starship_version | default('none') != starship_version
   become: true
   unarchive:
-    src: "https://github.com/starship/starship/releases/download/{{ starship_version }}/starship-{{ ansible_architecture }}-unknown-linux-musl.tar.gz"
+    src: "https://github.com/starship/starship/releases/download/{{ starship_version }}/starship-{{ ansible_facts['architecture'] }}-unknown-linux-musl.tar.gz"
     dest: /usr/local/bin/
     remote_src: true
 
@@ -21,10 +21,10 @@
       if command -v starship > /dev/null; then
           eval "$(starship init bash)"
       fi
-    path: /home/{{ ansible_user_id }}/.bashrc
+    path: /home/{{ ansible_facts["user_id"] }}/.bashrc
     marker: "# {mark} ANSIBLE MANAGED BLOCK STARSHIP"
 
 - name: Add starship config
   copy:
     src: starship.toml
-    dest: /home/{{ ansible_user_id }}/.config/starship.toml
+    dest: /home/{{ ansible_facts["user_id"] }}/.config/starship.toml

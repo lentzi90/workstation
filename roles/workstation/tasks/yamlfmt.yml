@@ -10,7 +10,7 @@
   when: current_yamlfmt_version | default('none') != yamlfmt_version
   become: true
   unarchive:
-    src: https://github.com/google/yamlfmt/releases/download/{{ yamlfmt_version }}/yamlfmt_{{ yamlfmt_version[1:] }}_Linux_{{ ansible_architecture }}.tar.gz
+    src: https://github.com/google/yamlfmt/releases/download/{{ yamlfmt_version }}/yamlfmt_{{ yamlfmt_version[1:] }}_Linux_{{ ansible_facts["architecture"] }}.tar.gz
     dest: /usr/local/bin/
     remote_src: true
     extra_opts:

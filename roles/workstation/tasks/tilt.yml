@@ -1,6 +1,6 @@
 - name: Set tilt_arch
   ansible.builtin.set_fact:
-    tilt_arch: "{{ 'arm64' if ansible_architecture == 'aarch64' else 'x86_64' if ansible_architecture == 'x86_64' else ansible_architecture }}"
+    tilt_arch: "{{ 'arm64' if ansible_facts['architecture'] == 'aarch64' else 'x86_64' if ansible_facts['architecture'] == 'x86_64' else ansible_facts['architecture'] }}"
 
 - name: Include GitHub release version check
   ansible.builtin.include_tasks: common/github_release.yml

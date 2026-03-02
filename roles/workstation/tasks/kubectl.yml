@@ -47,5 +47,5 @@
       source $HOME/.kube/completion.bash.inc
       alias k=kubectl
       complete -F __start_kubectl k
-    path: /home/{{ ansible_user_id }}/.bashrc
+    path: /home/{{ ansible_facts["user_id"] }}/.bashrc
     marker: "# {mark} ANSIBLE MANAGED BLOCK KUBECTL"

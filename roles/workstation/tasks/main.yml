@@ -1,6 +1,6 @@
 - name: Install workstation packages
   become: true
-  when: ansible_distribution == 'Ubuntu'
+  when: ansible_facts["distribution"] == 'Ubuntu'
   tags: ["desktop"]
   package:
     name:
@@ -16,17 +16,17 @@
     - libfuse2t64 # Needed for AppImages
 
 - import_tasks: docker.yml
-  when: (ansible_distribution == 'Ubuntu') or (ansible_distribution == 'Debian')
+  when: (ansible_facts["distribution"] == 'Ubuntu') or (ansible_facts["distribution"] == 'Debian')
   tags: ["docker"]
 
 - name: Install moby-engine via sysext
   import_tasks: moby-engine-sysext.yml
-  when: ansible_pkg_mgr == 'atomic_container'
+  when: ansible_facts["pkg_mgr"] == 'atomic_container'
   tags: ["docker", "sysext"]
 
 - name: Install packages for silverblue
   become: true
-  when: ansible_pkg_mgr == 'atomic_container'
+  when: ansible_facts["pkg_mgr"] == 'atomic_container'
   tags: ["desktop"]
   community.general.rpm_ostree_pkg:
     name:
@@ -56,11 +56,11 @@
 
 - import_tasks: chrome_fedora.yml
   become: true
-  when: ansible_distribution == 'Fedora' and ansible_pkg_mgr != 'atomic_container'
+  when: ansible_facts["distribution"] == 'Fedora' and ansible_facts["pkg_mgr"] != 'atomic_container'
   tags: ["chrome", "desktop"]
 - import_tasks: chrome_ubuntu.yml
   become: true
-  when: ansible_distribution == 'Ubuntu'
+  when: ansible_facts["distribution"] == 'Ubuntu'
   tags: ["chrome", "desktop"]
 
 - name: Install chainsaw
