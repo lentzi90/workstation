@@ -1,0 +1,21 @@
+- name: Include GitHub release version check
+  ansible.builtin.include_tasks: common/github_release.yml
+  vars:
+    binary_name: uv
+    repo: astral-sh/uv
+    version_check_command: uv --version
+    version_pattern: ([0-9]+\.){2}[0-9]+
+
+- name: Download and install uv
+  when: current_uv_version | default('none') != uv_version
+  become: true
+  unarchive:
+    src: "https://github.com/astral-sh/uv/releases/download/{{ uv_version }}/uv-{{ ansible_facts['architecture'] }}-unknown-linux-gnu.tar.gz"
+    dest: /usr/local/bin/
+    remote_src: true
+    extra_opts:
+    # Skip the folder inside the archive
+    - --strip=1
+    # The specific file(s) to extract
+    - uv-{{ ansible_facts['architecture'] }}-unknown-linux-gnu/uv
+    - uv-{{ ansible_facts['architecture'] }}-unknown-linux-gnu/uvx
