@@ -26,8 +26,18 @@ ansible-playbook setup.yml -K # -e github_token=${GITHUB_TOKEN}
 
 ## Install extras
 
-Not everything is installed by default.
-To install everything, add `-e install_extras=true`.
+Not everything is installed by default (e.g. `pre-commit`, `syncthing`, `ollama`, extra flatpaks).
+To install all extras, use the `extras` tag:
+
+```bash
+ansible-playbook setup.yml -K --tags "extras"
+```
+
+You can also install a specific extra by using its tag directly:
+
+```bash
+ansible-playbook setup.yml -K --tags "ollama"
+```
 
 ## Configure VS Code flatpak access to docker
 

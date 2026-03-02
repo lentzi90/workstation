@@ -31,10 +31,16 @@ workstation/
 ansible-playbook setup.yml -K
 ```
 
-### Install Everything (Including Extras)
+### Install All Extras
 
 ```bash
-ansible-playbook setup.yml -K -e install_extras=true
+ansible-playbook setup.yml -K --tags "extras"
+```
+
+### Install a Specific Extra
+
+```bash
+ansible-playbook setup.yml -K --tags "ollama"
 ```
 
 ### Run Specific Tags
@@ -52,7 +58,11 @@ Common tags include:
 - `sysext` - Systemd-sysext installations (Silverblue only)
 - `binaries` - CLI tools (kubectl, helm, kind, etc.)
 - `flatpaks` - Flatpak applications
-- `extras` - Optional components
+- `extras` - All optional components (pre-commit, syncthing, ollama, extra flatpaks)
+- `pre-commit` - Pre-commit (extra)
+- `syncthing` - Syncthing (extra)
+- `ollama` - Ollama (extra)
+- `extra_flatpaks` - Extra Flatpak applications (extra)
 
 ## What This Playbook Installs
 
@@ -122,7 +132,6 @@ To add a new binary from GitHub releases, create a task file that includes the c
 
 ## Configuration Variables
 
-- `install_extras` - Set to `true` to install optional components (default: `false`)
 - `github_token` - Optional GitHub token for authenticated downloads
 
 ## Platform Support

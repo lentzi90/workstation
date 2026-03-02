@@ -51,8 +51,8 @@
   tags: ["crates"]
 
 - import_tasks: pre-commit.yml
-  when: install_extras | default(false) | bool == true
-  tags: ["pre-commit"]
+  when: "'pre-commit' in ansible_run_tags or 'extras' in ansible_run_tags"
+  tags: ["pre-commit", "extras"]
 
 - import_tasks: chrome_fedora.yml
   become: true
@@ -191,12 +191,12 @@
 
 - name: Install syncthing
   import_tasks: syncthing.yml
-  when: install_extras | default(false) | bool == true
+  when: "'syncthing' in ansible_run_tags or 'extras' in ansible_run_tags"
   tags: ["binaries", "syncthing", "extras"]
 
 - name: Install ollama
   import_tasks: ollama.yml
-  when: install_extras | default(false) | bool == true
+  when: "'ollama' in ansible_run_tags or 'extras' in ansible_run_tags"
   tags: ["ollama", "extras"]
 
 - name: Install flatpaks
@@ -209,5 +209,5 @@
 
 - name: Install extra flatpaks
   import_tasks: extra_flatpaks.yml
-  when: install_extras | default(false) | bool == true
-  tags: ["extras", "desktop"]
+  when: "'extra_flatpaks' in ansible_run_tags or 'extras' in ansible_run_tags"
+  tags: ["extra_flatpaks", "extras", "desktop"]
