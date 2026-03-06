@@ -1,3 +1,9 @@
+- name: Update apt cache
+  become: true
+  when: ansible_facts["distribution"] == 'Ubuntu' or ansible_facts["distribution"] == 'Debian'
+  apt:
+    update_cache: yes
+
 - name: Install base packages
   become: true
   when: ansible_facts["distribution"] == 'Ubuntu' or ansible_facts["distribution"] == 'Debian'
