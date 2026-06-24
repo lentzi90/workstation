@@ -117,6 +117,10 @@
   import_tasks: kind.yml
   tags: ["binaries", "kind"]
 
+- name: Install kiro
+  import_tasks: kiro.yml
+  tags: ["binaries", "kiro"]
+
 - name: Install cloud-provider-kind
   import_tasks: cloud-provider-kind.yml
   tags: ["binaries", "cloud-provider-kind"]
@@ -132,6 +136,10 @@
 - name: Install minikube
   import_tasks: minikube.yml
   tags: ["binaries", "minikube"]
+
+- name: Install nono
+  import_tasks: nono.yml
+  tags: ["binaries", "nono"]
 
 - name: Install starship
   import_tasks: starship.yml

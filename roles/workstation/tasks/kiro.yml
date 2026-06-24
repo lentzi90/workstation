@@ -1,0 +1,14 @@
+- name: Download kiro zip
+  get_url:
+    url: "https://desktop-release.q.us-east-1.amazonaws.com/latest/kirocli-{{ ansible_facts['architecture'] }}-linux.zip"
+    dest: /tmp/kirocli.zip
+
+- name: Extract kiro binaries
+  become: true
+  command:
+    cmd: >-
+      unzip -o -j /tmp/kirocli.zip kirocli/bin/kiro-cli kirocli/bin/kiro-cli-chat kirocli/bin/kiro-cli-term -d /usr/local/bin #magic___^_^___line #magic___^_^___line
+- name: Clean up kiro zip
+  file:
+    path: /tmp/kirocli.zip
+    state: absent
