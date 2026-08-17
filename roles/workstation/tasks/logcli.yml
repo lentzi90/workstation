@@ -1,0 +1,31 @@
+- name: Include GitHub release version check
+  ansible.builtin.include_tasks: common/github_release.yml
+  vars:
+    binary_name: logcli
+    repo: grafana/loki
+    version_check_command: logcli --version
+    add_v_prefix: true
+
+- name: Download and extract logcli
+  when: current_logcli_version | default('none') != logcli_version
+  become: true
+  unarchive:
+    src: "https://github.com/grafana/loki/releases/download/{{ logcli_version }}/logcli-linux-{{ arch }}.zip"
+    dest: /tmp
+    remote_src: true
+
+- name: Install logcli binary
+  when: current_logcli_version | default('none') != logcli_version
+  become: true
+  ansible.builtin.copy:
+    src: "/tmp/logcli-linux-{{ arch }}"
+    dest: /usr/local/bin/logcli
+    remote_src: true
+    mode: "u=rwx,g=rx,o=rx"
+
+- name: Clean up logcli temporary files
+  when: current_logcli_version | default('none') != logcli_version
+  become: true
+  ansible.builtin.file:
+    path: "/tmp/logcli-linux-{{ arch }}"
+    state: absent
