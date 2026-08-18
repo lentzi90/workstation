@@ -1,0 +1,4 @@
+- name: Reload bwrap-userns-restrict apparmor profile
+  ansible.builtin.command: apparmor_parser -r /etc/apparmor.d/bwrap-userns-restrict
+  become: true
+  changed_when: false

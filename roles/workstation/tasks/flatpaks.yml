@@ -32,3 +32,13 @@
   command: "{{ item }}"
   loop:
   - flatpak override --user --filesystem=/run/docker.sock com.visualstudio.code
+
+- name: Install bwrap-userns-restrict apparmor profile for Zed
+  when: (ansible_facts["distribution"] == 'Ubuntu') or (ansible_facts["distribution"] == 'Debian')
+  ansible.builtin.copy:
+    src: /usr/share/apparmor/extra-profiles/bwrap-userns-restrict
+    dest: /etc/apparmor.d/bwrap-userns-restrict
+    mode: "0644"
+    remote_src: true
+  become: true
+  notify: Reload bwrap-userns-restrict apparmor profile
