@@ -1,0 +1,15 @@
+- name: Include GitHub release version check
+  ansible.builtin.include_tasks: common/github_release.yml
+  vars:
+    binary_name: loki_mcp_server
+    repo: grafana/loki-mcp
+    # There is no version check command. Just hard coding the latest version.
+    version_check_command: echo "v0.6.0"
+    version_pattern: v([0-9]+\.){2}[0-9]+
+
+- name: Build loki-mcp-server
+  when: current_loki_mcp_server_version | default('none') != loki_mcp_server_version
+  shell: |
+    export GOBIN="$(mktemp -d)"
+    go install github.com/scottlepp/loki-mcp/cmd/server@{{ loki_mcp_server_version }} &&
+    mv "${GOBIN}/server" ~/go/bin/loki-mcp-server

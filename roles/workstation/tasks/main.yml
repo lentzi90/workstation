@@ -177,6 +177,11 @@
   import_tasks: github-mcp-server.yml
   tags: ["binaries", "github-mcp-server"]
 
+- name: Install loki-mcp
+  import_tasks: loki-mcp.yml
+  when: "'loki-mcp' in ansible_run_tags or 'extras' in ansible_run_tags"
+  tags: ["binaries", "loki-mcp"]
+
 - name: Install talosctl
   import_tasks: talosctl.yml
   tags: ["binaries", "talosctl"]
