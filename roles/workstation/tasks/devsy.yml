@@ -1,0 +1,16 @@
+- name: Include GitHub release version check
+  ansible.builtin.include_tasks: common/github_release.yml
+  vars:
+    binary_name: devsy
+    repo: devsy-org/devsy
+    version_check_command: devsy --version
+    version_pattern: v([0-9]+\.){2}[0-9]+
+
+- name: Download and install devsy
+  when: current_devsy_version | default('none') != devsy_version
+  become: true
+  get_url:
+    url: https://github.com/devsy-org/devsy/releases/download/{{ devsy_version }}/devsy-linux-{{ arch }}
+    dest: /usr/local/bin/devsy
+    mode: "u=xrw,g=xr,o=x"
+    force: true

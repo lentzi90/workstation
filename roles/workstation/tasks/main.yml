@@ -98,6 +98,9 @@
 - import_tasks: devpod.yml
   tags: ["binaries", "devpod"]
 
+- import_tasks: devsy.yml
+  tags: ["binaries", "devsy"]
+
 - import_tasks: kubebuilder.yml
   tags: ["binaries", "kubebuilder"]
 

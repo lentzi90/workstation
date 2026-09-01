@@ -80,7 +80,7 @@ Common tags include:
 
 ### Applications
 - Flatpak applications
-- AppImages (Warp, DevPod, OpenCloud)
+- AppImages (Warp, DevPod, Devsy, OpenCloud)
 - Chrome browser
 
 ## Installation Methods
