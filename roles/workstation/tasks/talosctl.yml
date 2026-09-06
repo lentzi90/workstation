@@ -13,3 +13,4 @@
     url: "https://github.com/siderolabs/talos/releases/download/{{ talosctl_version }}/talosctl-linux-{{ arch }}"
     dest: /usr/local/bin/talosctl
     mode: "u=xrw,g=xr,o=x"
+    force: true
