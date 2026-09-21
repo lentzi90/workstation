@@ -197,6 +197,10 @@
   import_tasks: opencode.yml
   tags: ["binaries", "opencode"]
 
+- name: Install goose
+  import_tasks: goose.yml
+  tags: ["binaries", "goose"]
+
 - name: Install uv
   import_tasks: uv.yml
   tags: ["binaries", "uv"]

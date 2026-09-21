@@ -1,0 +1,23 @@
+- name: Include GitHub release version check
+  ansible.builtin.include_tasks: common/github_release.yml
+  vars:
+    binary_name: goose
+    repo: aaif-goose/goose
+    version_check_command: goose --version
+    version_pattern: v([0-9]+\.){2}[0-9]+
+    add_v_prefix: true
+
+- name: Set goose architecture
+  set_fact:
+    goose_arch: "{{ 'aarch64' if arch == 'arm64' else 'x86_64' }}"
+
+- name: Download, extract and install goose
+  when: current_goose_version | default('none') != goose_version
+  become: true
+  unarchive:
+    src: "https://github.com/aaif-goose/goose/releases/download/{{ goose_version }}/goose-{{ goose_arch }}-unknown-linux-gnu.tar.gz"
+    dest: /usr/local/bin/
+    remote_src: true
+    extra_opts:
+    # The specific file(s) to extract
+    - ./goose
