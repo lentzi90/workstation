@@ -24,6 +24,7 @@
     - libssl-dev
     - swig
     - libpcsclite-dev
+    - python3-debian # Needed for the deb822_repository module
 
 - name: Install base packages
   become: true

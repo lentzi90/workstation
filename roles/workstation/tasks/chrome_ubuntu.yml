@@ -1,14 +1,12 @@
-- name: "Add Google linux signing key"
-  apt_key: url=https://dl-ssl.google.com/linux/linux_signing_key.pub state=present
+# The google-chrome-stable package configures its own apt repository and signing
+# key (/etc/apt/sources.list.d/google-chrome.sources), so it is only installed
+# from the official .deb once. After that it is kept up to date through apt.
+- name: "Check if Google chrome is installed"
+  ansible.builtin.package_facts:
+    manager: apt
 
-- name: "Add Google chrome repo"
-  apt_repository:
-    repo: "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main"
-    filename: "google-chrome"
-    state: present
-    update_cache: true
-
-- name: "Install Google chrome present"
-  apt:
-    name: "google-chrome-stable"
+- name: "Install Google chrome"
+  when: "'google-chrome-stable' not in ansible_facts.packages"
+  ansible.builtin.apt:
+    deb: https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
     state: present

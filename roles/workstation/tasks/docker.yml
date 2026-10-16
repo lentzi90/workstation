@@ -1,14 +1,24 @@
-- name: Add Docker apt key.
+# Clean up the legacy one-line-style repository and apt-key location from older
+# runs, otherwise apt complains about conflicting Signed-By values.
+- name: Remove legacy Docker apt repository and key
   become: true
-  ansible.builtin.get_url:
-    url: https://download.docker.com/linux/{{ distro }}/gpg
-    dest: /etc/apt/trusted.gpg.d/docker.asc
-    mode: '0644'
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+  - /etc/apt/sources.list.d/download_docker_com_linux_{{ distro }}.list
+  - /etc/apt/trusted.gpg.d/docker.asc
 
 - name: Add Docker Repository
   become: true
-  apt_repository:
-    repo: "deb [arch={{ arch }} signed-by=/etc/apt/trusted.gpg.d/docker.asc] https://download.docker.com/linux/{{ distro }} {{ ansible_facts['distribution_release'] }} stable"
+  ansible.builtin.deb822_repository:
+    name: docker
+    types: deb
+    uris: https://download.docker.com/linux/{{ distro }}
+    suites: "{{ ansible_facts['distribution_release'] }}"
+    components: stable
+    architectures: "{{ arch }}"
+    signed_by: https://download.docker.com/linux/{{ distro }}/gpg
     state: present
   register: docker_repository
 
