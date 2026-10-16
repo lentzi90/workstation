@@ -1,0 +1,128 @@
+# Microsandbox is installed per-user, mirroring the layout of the upstream install.sh:
+#   ~/.microsandbox/bin/msb              the CLI (also exposed as `microsandbox`)
+#   ~/.microsandbox/lib/libkrunfw.so.*   the guest kernel library, found by msb relative to MSB_HOME
+#   ~/.local/bin/{msb,microsandbox}      symlinks so the CLI is on PATH
+- name: Set microsandbox paths
+  set_fact:
+    microsandbox_home: "{{ ansible_facts['user_dir'] }}/.microsandbox"
+    microsandbox_arch: "{{ ansible_facts['architecture'] }}"
+
+- name: Include GitHub release version check
+  ansible.builtin.include_tasks: common/github_release.yml
+  vars:
+    binary_name: microsandbox
+    repo: superradcompany/microsandbox
+    version_check_command: "{{ microsandbox_home }}/bin/msb --version"
+    # The tag is vX.Y.Z but `msb --version` prints just X.Y.Z, so keep the version without the 'v'
+    version_pattern: ([0-9]+\.){2}[0-9]+
+
+- name: Download and install microsandbox
+  when: current_microsandbox_version | default('none') != microsandbox_version
+  block:
+  - name: Create microsandbox directories
+    file:
+      path: "{{ item }}"
+      state: directory
+      mode: "u=rwx,g=rx,o=rx"
+    loop:
+    - "{{ microsandbox_home }}/bin"
+    - "{{ microsandbox_home }}/lib"
+
+  - name: Create temporary directory for microsandbox
+    tempfile:
+      state: directory
+      prefix: microsandbox.
+    register: microsandbox_tmp
+
+  - name: Download and extract microsandbox
+    unarchive:
+      src: "https://github.com/superradcompany/microsandbox/releases/download/v{{ microsandbox_version }}/microsandbox-linux-{{ microsandbox_arch }}.tar.gz"
+      dest: "{{ microsandbox_tmp.path }}"
+      remote_src: true
+
+  - name: Find libkrunfw in the release bundle
+    find:
+      paths: "{{ microsandbox_tmp.path }}"
+      patterns: libkrunfw.so.*.*.*
+    register: microsandbox_libkrunfw
+
+  - name: Ensure the release bundle contains exactly one libkrunfw
+    assert:
+      that: microsandbox_libkrunfw.files | length == 1
+      fail_msg: "Expected exactly one versioned libkrunfw in the release bundle, found {{ microsandbox_libkrunfw.files | length }}"
+
+  - name: Set libkrunfw file name
+    set_fact:
+      microsandbox_libkrunfw_file: "{{ microsandbox_libkrunfw.files[0].path | basename }}"
+
+  - name: Set libkrunfw ABI version
+    set_fact:
+      microsandbox_libkrunfw_abi: "{{ (microsandbox_libkrunfw_file | split('.'))[2] }}"
+
+  - name: Install msb
+    copy:
+      src: "{{ microsandbox_tmp.path }}/msb"
+      dest: "{{ microsandbox_home }}/bin/msb"
+      remote_src: true
+      mode: "u=rwx,g=rx,o=rx"
+
+  - name: Install libkrunfw
+    copy:
+      src: "{{ microsandbox_libkrunfw.files[0].path }}"
+      dest: "{{ microsandbox_home }}/lib/{{ microsandbox_libkrunfw_file }}"
+      remote_src: true
+      mode: "u=rw,g=r,o=r"
+
+  - name: Link libkrunfw
+    file:
+      src: "{{ item.src }}"
+      dest: "{{ microsandbox_home }}/lib/{{ item.dest }}"
+      state: link
+    loop:
+    - src: "{{ microsandbox_libkrunfw_file }}"
+      dest: "libkrunfw.so.{{ microsandbox_libkrunfw_abi }}"
+    - src: "libkrunfw.so.{{ microsandbox_libkrunfw_abi }}"
+      dest: libkrunfw.so
+
+  - name: Find old libkrunfw versions
+    find:
+      paths: "{{ microsandbox_home }}/lib"
+      patterns: libkrunfw.so.*.*.*
+      excludes: "{{ microsandbox_libkrunfw_file }}"
+    register: microsandbox_old_libkrunfw
+
+  - name: Remove old libkrunfw versions
+    file:
+      path: "{{ item.path }}"
+      state: absent
+    loop: "{{ microsandbox_old_libkrunfw.files }}"
+    loop_control:
+      label: "{{ item.path }}"
+
+  always:
+  - name: Remove temporary microsandbox directory
+    when: microsandbox_tmp.path is defined
+    file:
+      path: "{{ microsandbox_tmp.path }}"
+      state: absent
+
+- name: Create ~/.local/bin
+  file:
+    path: "{{ ansible_facts['user_dir'] }}/.local/bin"
+    state: directory
+    mode: "u=rwx,g=rx,o=rx"
+
+- name: Link microsandbox commands
+  file:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    state: link
+  loop:
+  - src: msb
+    dest: "{{ microsandbox_home }}/bin/microsandbox"
+  - src: "{{ microsandbox_home }}/bin/msb"
+    dest: "{{ ansible_facts['user_dir'] }}/.local/bin/msb"
+  - src: "{{ microsandbox_home }}/bin/msb"
+    dest: "{{ ansible_facts['user_dir'] }}/.local/bin/microsandbox"
+  loop_control:
+    label: "{{ item.dest }}"

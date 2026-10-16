@@ -140,6 +140,10 @@
   import_tasks: minikube.yml
   tags: ["binaries", "minikube"]
 
+- name: Install microsandbox
+  import_tasks: microsandbox.yml
+  tags: ["binaries", "microsandbox"]
+
 - name: Install nono
   import_tasks: nono.yml
   tags: ["binaries", "nono"]
