@@ -79,7 +79,7 @@
   import_tasks: kustomize.yml
   tags: ["binaries", "kustomize"]
 
-- name: Install k9s
+- name: Uninstall k9s
   import_tasks: k9s.yml
   tags: ["binaries", "k9s"]
 
@@ -95,7 +95,8 @@
   import_tasks: cmctl.yml
   tags: ["binaries", "cmctl"]
 
-- import_tasks: devpod.yml
+- name: Uninstall devpod
+  import_tasks: devpod.yml
   tags: ["binaries", "devpod"]
 
 - import_tasks: devsy.yml
@@ -197,7 +198,7 @@
   import_tasks: tpi.yml
   tags: ["binaries", "tpi"]
 
-- name: Install opencode
+- name: Uninstall opencode
   import_tasks: opencode.yml
   tags: ["binaries", "opencode"]
 
@@ -217,10 +218,9 @@
   import_tasks: logcli.yml
   tags: ["binaries", "logcli"]
 
-- name: Install syncthing
+- name: Uninstall syncthing
   import_tasks: syncthing.yml
-  when: "'syncthing' in ansible_run_tags or 'extras' in ansible_run_tags"
-  tags: ["binaries", "syncthing", "extras"]
+  tags: ["binaries", "syncthing"]
 
 - name: Install ollama
   import_tasks: ollama.yml

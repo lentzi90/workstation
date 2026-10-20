@@ -3,16 +3,10 @@
     path: "{{ ansible_facts['user_dir'] }}/AppImages"
     state: directory
 
-- name: Uninstall Warp AppImage
+- name: Uninstall DevPod AppImage
   file:
-    path: "{{ ansible_facts['user_dir'] }}/AppImages/warp.appimage"
+    path: "{{ ansible_facts['user_dir'] }}/AppImages/devpod.appimage"
     state: absent
-
-- name: Install DevPod AppImage
-  get_url:
-    url: https://github.com/loft-sh/devpod/releases/latest/download/DevPod_linux_amd64.AppImage
-    dest: "{{ ansible_facts['user_dir'] }}/AppImages/devpod.appimage"
-    force: false
 
 - name: Install Devsy AppImage
   get_url:

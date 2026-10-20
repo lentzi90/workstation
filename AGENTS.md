@@ -58,9 +58,9 @@ Common tags include:
 - `sysext` - Systemd-sysext installations (Silverblue only)
 - `binaries` - CLI tools (kubectl, helm, kind, etc.)
 - `flatpaks` - Flatpak applications
-- `extras` - All optional components (pre-commit, syncthing, ollama, extra flatpaks)
+- `extras` - All optional components (pre-commit, ollama, extra flatpaks)
 - `pre-commit` - Pre-commit (extra)
-- `syncthing` - Syncthing (extra)
+- `syncthing` - Uninstalls Syncthing
 - `ollama` - Ollama (extra)
 - `extra_flatpaks` - Extra Flatpak applications (extra)
 
@@ -73,14 +73,14 @@ Common tags include:
 
 ### Development Environment
 - Docker (via apt on Ubuntu/Debian, via sysext on Silverblue)
-- Kubernetes tools (kubectl, kind, minikube, helm, kustomize, k9s)
+- Kubernetes tools (kubectl, kind, minikube, helm, kustomize)
 - Cloud-native tools (argocd, tilt, clusterctl)
 - Programming languages (Go, Rust)
 - Version managers and package managers
 
 ### Applications
 - Flatpak applications
-- AppImages (Warp, DevPod, Devsy, OpenCloud)
+- AppImages (Warp, Devsy, OpenCloud)
 - Chrome browser
 
 ## Installation Methods

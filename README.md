@@ -26,7 +26,7 @@ ansible-playbook setup.yml -K # -e github_token=${GITHUB_TOKEN}
 
 ## Install extras
 
-Not everything is installed by default (e.g. `pre-commit`, `syncthing`, `ollama`, extra flatpaks).
+Not everything is installed by default (e.g. `pre-commit`, `ollama`, extra flatpaks).
 To install all extras, use the `extras` tag:
 
 ```bash
