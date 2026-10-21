@@ -149,6 +149,10 @@
   import_tasks: nono.yml
   tags: ["binaries", "nono"]
 
+- name: Install presenterm
+  import_tasks: presenterm.yml
+  tags: ["binaries", "presenterm"]
+
 - name: Install starship
   import_tasks: starship.yml
   tags: ["binaries", "starship"]

@@ -1,0 +1,20 @@
+- name: Include GitHub release version check
+  ansible.builtin.include_tasks: common/github_release.yml
+  vars:
+    binary_name: presenterm
+    repo: mfontanini/presenterm
+    version_check_command: presenterm --version
+    add_v_prefix: true
+
+- name: Download, extract and install presenterm
+  when: current_presenterm_version | default('none') != presenterm_version
+  become: true
+  unarchive:
+    src: "https://github.com/mfontanini/presenterm/releases/download/{{ presenterm_version }}/presenterm-{{ presenterm_version | regex_replace('^v', '') }}-{{ ansible_facts['architecture'] }}-unknown-linux-musl.tar.gz"
+    dest: /usr/local/bin/
+    remote_src: true
+    extra_opts:
+    # The archive contains a top-level presenterm-<version>/ directory
+    - --strip-components=1
+    # The specific file(s) to extract
+    - "presenterm-{{ presenterm_version | regex_replace('^v', '') }}/presenterm"
